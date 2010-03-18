@@ -267,3 +267,9 @@ config NVTEGRA_HIDE_PARTS
 	  bootloader, and others which does not contain valid filesystem.
 	  list each partition name (the 3,4 letters identifier) separated
 	  by commas.
+
+config CMDLINE_PARTITION
+       bool "Kernel command line partition table support" if PARTITION_ADVANCED
+       help
+	 Say Y here if you would like to pass the partition table for a device
+	 on the kernel command line.
