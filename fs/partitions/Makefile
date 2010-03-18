@@ -19,3 +19,4 @@ obj-$(CONFIG_EFI_PARTITION) += efi.o
 obj-$(CONFIG_KARMA_PARTITION) += karma.o
 obj-$(CONFIG_SYSV68_PARTITION) += sysv68.o
 obj-$(CONFIG_NVTEGRA_PARTITION) += nvtegra.o
+obj-$(CONFIG_CMDLINE_PARTITION) += cmdline.o
