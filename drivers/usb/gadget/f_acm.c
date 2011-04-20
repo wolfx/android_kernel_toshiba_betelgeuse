@@ -17,11 +17,19 @@
 #include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
-#include <linux/usb/android_composite.h>
 
 #include "u_serial.h"
 #include "gadget_chips.h"
 
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+/* LG host driver use 16 bytes as max packet size of notify ep,
+ * but QCT use 10 bytes. Therefore we apply non-public patch for matching
+ * with LG host driver.
+ *
+ * TODO: This definition may be included into kernel configuration
+ */
+#define LG_ACM_FIX 1
+//20101205, , matching for LG Android Net Driver from vs660 [END]
 
 /*
  * This CDC ACM function support just wraps control functions and
@@ -99,25 +107,28 @@ static inline struct f_acm *port_to_acm(struct gserial *p)
 /* notification endpoint uses smallish and infrequent fixed-size messages */
 
 #define GS_LOG2_NOTIFY_INTERVAL		5	/* 1 << 5 == 32 msec */
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+#ifdef LG_ACM_FIX
+#define GS_NOTIFY_MAXPACKET		16	/* For LG host driver */
+#else
 #define GS_NOTIFY_MAXPACKET		10	/* notification + 2 bytes */
+#endif
+//20101205, , matching for LG Android Net Driver from vs660 [END]
 
 /* interface and class descriptors: */
 
-static struct usb_interface_assoc_descriptor
-acm_iad_descriptor = {
-	.bLength =		sizeof acm_iad_descriptor,
-	.bDescriptorType =	USB_DT_INTERFACE_ASSOCIATION,
-
-	/* .bFirstInterface =	DYNAMIC, */
-	.bInterfaceCount = 	2,	// control + data
-	.bFunctionClass =	USB_CLASS_COMM,
-	.bFunctionSubClass =	USB_CDC_SUBCLASS_ACM,
-	.bFunctionProtocol =	USB_CDC_ACM_PROTO_AT_V25TER,
-	/* .iFunction =		DYNAMIC */
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+struct usb_interface_assoc_descriptor acm_interface_assoc_desc = {
+	.bLength           = 8,
+	.bDescriptorType   = USB_DT_INTERFACE_ASSOCIATION,
+	.bInterfaceCount   = 2,
+	.bFirstInterface   = 3,
+	.bFunctionClass    = USB_CLASS_COMM,
+	.bFunctionSubClass = USB_CDC_SUBCLASS_ACM,
+	.bFunctionProtocol = USB_CDC_ACM_PROTO_AT_V25TER,
 };
-
-
-static struct usb_interface_descriptor acm_control_interface_desc = {
+//20101205, , matching for LG Android Net Driver from vs660 [END]
+static struct usb_interface_descriptor acm_control_interface_desc __initdata = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
 	.bDescriptorType =	USB_DT_INTERFACE,
 	/* .bInterfaceNumber = DYNAMIC */
@@ -195,8 +206,9 @@ static struct usb_endpoint_descriptor acm_fs_out_desc = {
 	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
 };
 
-static struct usb_descriptor_header *acm_fs_function[] = {
-	(struct usb_descriptor_header *) &acm_iad_descriptor,
+static struct usb_descriptor_header *acm_fs_function[] __initdata = {
+//20101205, , matching for LG Android Net Driver from vs660
+	(struct usb_descriptor_header *) &acm_interface_assoc_desc,
 	(struct usb_descriptor_header *) &acm_control_interface_desc,
 	(struct usb_descriptor_header *) &acm_header_desc,
 	(struct usb_descriptor_header *) &acm_call_mgmt_descriptor,
@@ -234,8 +246,9 @@ static struct usb_endpoint_descriptor acm_hs_out_desc = {
 	.wMaxPacketSize =	cpu_to_le16(512),
 };
 
-static struct usb_descriptor_header *acm_hs_function[] = {
-	(struct usb_descriptor_header *) &acm_iad_descriptor,
+static struct usb_descriptor_header *acm_hs_function[] __initdata = {
+//20101205, , matching for LG Android Net Driver from vs660
+	(struct usb_descriptor_header *) &acm_interface_assoc_desc,
 	(struct usb_descriptor_header *) &acm_control_interface_desc,
 	(struct usb_descriptor_header *) &acm_header_desc,
 	(struct usb_descriptor_header *) &acm_call_mgmt_descriptor,
@@ -469,11 +482,24 @@ static int acm_cdc_notify(struct f_acm *acm, u8 type, u16 value,
 	void				*buf;
 	int				status;
 
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+#ifdef LG_ACM_FIX
+	unsigned char noti_buf[GS_NOTIFY_MAXPACKET];
+	memset(noti_buf, 0, GS_NOTIFY_MAXPACKET);
+#endif
+//20101205, , matching for LG Android Net Driver from vs660 [END]
+
 	req = acm->notify_req;
 	acm->notify_req = NULL;
 	acm->pending = false;
 
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+#ifdef LG_ACM_FIX
+	req->length = GS_NOTIFY_MAXPACKET;
+#else
 	req->length = len;
+#endif
+//20101205, , matching for LG Android Net Driver from vs660 [END]
 	notify = req->buf;
 	buf = notify + 1;
 
@@ -483,7 +509,14 @@ static int acm_cdc_notify(struct f_acm *acm, u8 type, u16 value,
 	notify->wValue = cpu_to_le16(value);
 	notify->wIndex = cpu_to_le16(acm->ctrl_id);
 	notify->wLength = cpu_to_le16(length);
+//20101205, , matching for LG Android Net Driver from vs660 [START]
+#ifdef LG_ACM_FIX
+	memcpy(noti_buf, data, length);
+	memcpy(buf, noti_buf, GS_NOTIFY_MAXPACKET);
+#else
 	memcpy(buf, data, length);
+#endif
+//20101205, , matching for LG Android Net Driver from vs660 [END]
 
 	/* ep_queue() can complete immediately if it fills the fifo... */
 	spin_unlock(&acm->lock);
@@ -585,7 +618,7 @@ acm_bind(struct usb_configuration *c, struct usb_function *f)
 	if (status < 0)
 		goto fail;
 	acm->ctrl_id = status;
-	acm_iad_descriptor.bFirstInterface = status;
+	acm_interface_assoc_desc.bFirstInterface = status;
 
 	acm_control_interface_desc.bInterfaceNumber = status;
 	acm_union_desc .bMasterInterface0 = status;
@@ -697,8 +730,9 @@ acm_unbind(struct usb_configuration *c, struct usb_function *f)
 	if (gadget_is_dualspeed(c->cdev->gadget))
 		usb_free_descriptors(f->hs_descriptors);
 	usb_free_descriptors(f->descriptors);
-	gs_free_req(acm->notify, acm->notify_req);
-	kfree(acm->port.func.name);
+
+	if (acm->notify_req)
+		gs_free_req(acm->notify, acm->notify_req);
 	kfree(acm);
 }
 
@@ -788,55 +822,3 @@ int acm_bind_config(struct usb_configuration *c, u8 port_num)
 		kfree(acm);
 	return status;
 }
-
-#ifdef CONFIG_USB_ANDROID_ACM
-#include <linux/platform_device.h>
-
-static struct acm_platform_data *acm_pdata;
-
-static int acm_probe(struct platform_device *pdev)
-{
-	acm_pdata = pdev->dev.platform_data;
-	return 0;
-}
-
-static struct platform_driver acm_platform_driver = {
-	.driver = { .name = "acm", },
-	.probe = acm_probe,
-};
-
-int acm_function_bind_config(struct usb_configuration *c)
-{
-	int i;
-	u8 num_inst = acm_pdata ? acm_pdata->num_inst : 1;
-	int ret = gserial_setup(c->cdev->gadget, num_inst);
-
-	if (ret)
-		return ret;
-
-	for (i = 0; i < num_inst; i++) {
-		ret = acm_bind_config(c, i);
-		if (ret) {
-			pr_err("Could not bind acm%u config\n", i);
-			break;
-		}
-	}
-
-	return ret;
-}
-
-static struct android_usb_function acm_function = {
-	.name = "acm",
-	.bind_config = acm_function_bind_config,
-};
-
-static int __init init(void)
-{
-	printk(KERN_INFO "f_acm init\n");
-	platform_driver_register(&acm_platform_driver);
-	android_register_function(&acm_function);
-	return 0;
-}
-module_init(init);
-
-#endif /* CONFIG_USB_ANDROID_ACM */
