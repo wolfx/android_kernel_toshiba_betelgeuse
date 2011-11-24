@@ -468,11 +468,7 @@ static int set_config(struct usb_composite_dev *cdev,
 			 "%s: interface %d (%s) requested delayed status\n",
 					__func__, tmp, f->name);
 			cdev->delayed_status++;
-<<<<<<< HEAD
-			DBG(cdev, "delayed_status count %d\n",
-=======
 				DBG(cdev, "delayed_status count %d\n",
->>>>>>> f7b7215... usb: gadget: composite: Allow function drivers to defer setup responses
 					cdev->delayed_status);
 		}
 	}
@@ -501,8 +497,7 @@ done:
  * resources such as interface IDs and endpoints.
  */
 int usb_add_config(struct usb_composite_dev *cdev,
-		struct usb_configuration *config,
-		int (*bind)(struct usb_configuration *))
+		struct usb_configuration *config)
 {
 	int				status = -EINVAL;
 	struct usb_configuration	*c;
@@ -805,12 +800,12 @@ int usb_string_ids_tab(struct usb_composite_dev *cdev, struct usb_string *str)
 
 /**
  * usb_string_ids_n() - allocate unused string IDs in batch
- * @c: the device whose string descriptor IDs are being allocated
+ * @cdev: the device whose string descriptor IDs are being allocated
  * @n: number of string IDs to allocate
  * Context: single threaded during gadget setup
  *
  * Returns the first requested ID.  This ID and next @n-1 IDs are now
- * valid IDs.  At least provided that @n is non-zero because if it
+ * valid IDs.  At least providind that @n is non zore because if it
  * is, returns last requested ID which is now very useful information.
  *
  * @usb_string_ids_n() is called from bind() callbacks to allocate
@@ -991,7 +986,9 @@ unknown:
 		 */
 		switch (ctrl->bRequestType & USB_RECIP_MASK) {
 		case USB_RECIP_INTERFACE:
-			if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+			if (cdev->config == NULL)
+				return value;
+			if (!cdev->config || w_index >= MAX_CONFIG_INTERFACES)
 				break;
 			f = cdev->config->interface[intf];
 			break;
@@ -1096,10 +1093,12 @@ composite_unbind(struct usb_gadget *gadget)
 	}
 	kfree(cdev);
 	set_gadget_data(gadget, NULL);
+	device_remove_file(&gadget->dev, &dev_attr_suspended);
 	composite = NULL;
 }
 
-static u8 override_id(struct usb_composite_dev *cdev, u8 *desc)
+static void
+string_override_one(struct usb_gadget_strings *tab, u8 id, const char *s)
 {
 	if (!*desc) {
 		int ret = usb_string_id(cdev);
@@ -1108,8 +1107,15 @@ static u8 override_id(struct usb_composite_dev *cdev, u8 *desc)
 		else
 			*desc = ret;
 	}
+}
 
-	return *desc;
+static void
+string_override(struct usb_gadget_strings **tab, u8 id, const char *s)
+{
+	while (*tab) {
+		string_override_one(*tab, id, s);
+		tab++;
+	}
 }
 
 static int composite_bind(struct usb_gadget *gadget)
@@ -1153,6 +1159,14 @@ static int composite_bind(struct usb_gadget *gadget)
 	 */
 	usb_ep_autoconfig_reset(cdev->gadget);
 
+	/* standardized runtime overrides for device ID data */
+	if (idVendor)
+		cdev->desc.idVendor = cpu_to_le16(idVendor);
+	if (idProduct)
+		cdev->desc.idProduct = cpu_to_le16(idProduct);
+	if (bcdDevice)
+		cdev->desc.bcdDevice = cpu_to_le16(bcdDevice);
+
 	/* composite gadget needs to assign strings for whole device (like
 	 * serial number), register function drivers, potentially update
 	 * power state and consumption, etc
@@ -1164,42 +1178,19 @@ static int composite_bind(struct usb_gadget *gadget)
 	cdev->desc = *composite->dev;
 	cdev->desc.bMaxPacketSize0 = gadget->ep0->maxpacket;
 
-	/* standardized runtime overrides for device ID data */
-	if (idVendor)
-		cdev->desc.idVendor = cpu_to_le16(idVendor);
-	if (idProduct)
-		cdev->desc.idProduct = cpu_to_le16(idProduct);
-	if (bcdDevice)
-		cdev->desc.bcdDevice = cpu_to_le16(bcdDevice);
+	/* strings can't be assigned before bind() allocates the
+	 * releavnt identifiers
+	 */
+	if (cdev->desc.iManufacturer && iManufacturer)
+		string_override(composite->strings,
+			cdev->desc.iManufacturer, iManufacturer);
+	if (cdev->desc.iProduct && iProduct)
+		string_override(composite->strings,
+			cdev->desc.iProduct, iProduct);
+	if (cdev->desc.iSerialNumber && iSerialNumber)
+		string_override(composite->strings,
+			cdev->desc.iSerialNumber, iSerialNumber);
 
-	/* string overrides */
-	if (iManufacturer || !cdev->desc.iManufacturer) {
-		if (!iManufacturer && !composite->iManufacturer &&
-		    !*composite_manufacturer)
-			snprintf(composite_manufacturer,
-				 sizeof composite_manufacturer,
-				 "%s %s with %s",
-				 init_utsname()->sysname,
-				 init_utsname()->release,
-				 gadget->name);
-
-		cdev->manufacturer_override =
-			override_id(cdev, &cdev->desc.iManufacturer);
-	}
-
-	if (iProduct || (!cdev->desc.iProduct && composite->iProduct))
-		cdev->product_override =
-			override_id(cdev, &cdev->desc.iProduct);
-
-	if (iSerialNumber)
-		cdev->serial_override =
-			override_id(cdev, &cdev->desc.iSerialNumber);
-
-	/* has userspace failed to provide a serial number? */
-	if (composite->needs_serial && !cdev->desc.iSerialNumber)
-		WARNING(cdev, "userspace failed to provide iSerialNumber\n");
-
-	/* finish up */
 	status = device_create_file(&gadget->dev, &dev_attr_suspended);
 	if (status)
 		goto fail;
@@ -1234,8 +1225,6 @@ composite_suspend(struct usb_gadget *gadget)
 		composite->suspend(cdev);
 
 	cdev->suspended = 1;
-
-	usb_gadget_vbus_draw(gadget, 2);
 }
 
 static void
@@ -1271,6 +1260,7 @@ composite_resume(struct usb_gadget *gadget)
 static struct usb_gadget_driver composite_driver = {
 	.speed		= USB_SPEED_HIGH,
 
+	.bind		= composite_bind,
 	.unbind		= composite_unbind,
 
 	.setup		= composite_setup,
@@ -1303,8 +1293,7 @@ static struct usb_gadget_driver composite_driver = {
  * while it was binding.  That would usually be done in order to wait for
  * some userspace participation.
  */
-int usb_composite_probe(struct usb_composite_driver *driver,
-			       int (*bind)(struct usb_composite_dev *cdev))
+int usb_composite_register(struct usb_composite_driver *driver)
 {
 	if (!driver || !driver->dev || !bind || composite)
 		return -EINVAL;
