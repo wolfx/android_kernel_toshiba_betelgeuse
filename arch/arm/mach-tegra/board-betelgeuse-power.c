@@ -24,21 +24,21 @@
 #include <linux/gpio.h>
 #include <linux/io.h>
 #include <linux/err.h>
-#include <linux/mfd/nvec.h>
+//#include <linux/mfd/nvec.h>
 
 #include <mach/iomap.h>
 #include <mach/irqs.h>
 #include <mach/system.h>
-#include <mach/suspend.h>
 
 #include <generated/mach-types.h>
 
 #include "gpio-names.h"
 #include "fuse.h"
-#include "power.h"
+//#include "power.h"
 #include "wakeups-t2.h"
 #include "board.h"
 #include "board-betelgeuse.h"
+#include "pm.h"
 
 #define PMC_CTRL		0x0
 #define PMC_CTRL_INTR_LOW	(1 << 17)
@@ -263,7 +263,7 @@ static void reg_on(const char *reg)
 static void betelgeuse_power_off(void)
 {
 	/* Power down through NvEC */
-	nvec_poweroff();
+	//nvec_poweroff();
 
 	/* Then try by powering off supplies */
 	reg_off("vdd_sm2");
@@ -316,14 +316,16 @@ static struct notifier_block tegra_reboot_nb = {
 	.priority = 0
 };
 
+/*
 static void __init tegra_setup_reboot(void)
 {
 	int rc = register_reboot_notifier(&tegra_reboot_nb);
 	if (rc)
 		pr_err("%s: failed to register platform reboot notifier\n",__func__);
+	*/
 	/*arm_pm_restart = shuttle_restart;             */
-	tegra_reset = tegra_sys_reset;
-}
+	/*tegra_reset = tegra_sys_reset;
+}*/
 
 int __init betelgeuse_power_init(void)
 {
@@ -344,9 +346,9 @@ int __init betelgeuse_power_init(void)
 	pm_power_off = betelgeuse_power_off;
 
 	/* And the restart callback */
-	tegra_setup_reboot();
+	//tegra_setup_reboot();
 
-	regulator_has_full_constraints();
+	//regulator_has_full_constraints();
 
 	return 0;
 }

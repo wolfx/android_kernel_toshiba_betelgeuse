@@ -1,8 +1,7 @@
 /*
  * arch/arm/mach-tegra/board-betelgeuse.c
  *
- * Copyright (C) 2010 Google, Inc.
- *               2011 Artem Makhutov <artem@makhutov.org>
+ * Copyright (C) 2011 Artem Makhutov <artem@makhutov.org>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -15,18 +14,20 @@
  *
  */
 
+#include <linux/console.h>
 #include <linux/kernel.h>
-#include <linux/version.h>
 #include <linux/init.h>
+#include <linux/version.h>
 #include <linux/platform_device.h>
 #include <linux/serial_8250.h>
 #include <linux/clk.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
 #include <linux/dma-mapping.h>
-#include <linux/i2c.h>
-#include <linux/i2c-tegra.h>
+#include <linux/fsl_devices.h>
+#include <linux/platform_data/tegra_usb.h>
 #include <linux/gpio.h>
+#include <linux/i2c.h>
 #include <linux/input/eeti_ts.h>
 #include <linux/input.h>
 #include <linux/io.h>
@@ -44,9 +45,9 @@
 #include <mach/irqs.h>
 #include <mach/clk.h>
 #include <mach/usb_phy.h>
-#include <mach/suspend.h>
+//#include <mach/suspend.h>
 #include <mach/spdif.h>
-#include <mach/tegra_das.h>
+//#include <mach/tegra_das.h>
 
 #include <sound/wm8903.h>
 
@@ -54,6 +55,7 @@
 #include "board.h"
 #include "board-betelgeuse.h"
 #include "devices.h"
+#include "pm.h"
 #include "gpio-names.h"
 #include "wakeups-t2.h"
 
@@ -154,10 +156,6 @@ static struct tegra_suspend_platform_data betelgeuse_suspend = {
 	.corereq_high	= false,
 	.sysclkreq_high	= true,
 	.suspend_mode   = TEGRA_SUSPEND_LP0,
-	.wake_enb	= TEGRA_WAKE_GPIO_PA0,
-	.wake_high	= 0,
-	.wake_low	= TEGRA_WAKE_GPIO_PA0,
-	.wake_any	= 0,
 };
 
 static struct plat_serial8250_port debug_uart_platform_data[] = {
@@ -220,14 +218,13 @@ static struct platform_device *betelgeuse_devices[] __initdata = {
 
 static void __init tegra_betelgeuse_init(void)
 {
-	tegra_common_init();
 	tegra_init_suspend(&betelgeuse_suspend);
 //	betelgeuse_emc_init();
 	betelgeuse_pinmux_init();
 	betelgeuse_clocks_init();
 	betelgeuse_i2c_init();
 	betelgeuse_power_init();
-	betelgeuse_nvec_init();
+//	betelgeuse_nvec_init();
 	betelgeuse_usb_init();
 	//UART
 	//SPI
@@ -245,13 +242,12 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_camera_init();
 }
 
-MACHINE_START(TEGRA_LEGACY, "tegra_legacy")
-	.boot_params  = 0x00000100,
-	.phys_io        = IO_APB_PHYS,
-	.io_pg_offst    = ((IO_APB_VIRT) >> 18) & 0xfffc,
+MACHINE_START(LEGACY, "legacy")
+	.boot_params 	= 0x00000100,
 	.fixup          = tegra_betelgeuse_fixup,
+	.map_io		= tegra_map_common_io,
+	.init_early	= tegra_init_early,
 	.init_irq       = tegra_init_irq,
-	.init_machine   = tegra_betelgeuse_init,
-	.map_io         = tegra_map_common_io,
 	.timer          = &tegra_timer,
+	.init_machine   = tegra_betelgeuse_init,
 MACHINE_END

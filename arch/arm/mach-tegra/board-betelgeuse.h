@@ -49,6 +49,14 @@ int betelgeuse_wifi_status_register(void (*callback)(int , void *), void *);
 #define WM8903_GP4              (WM8903_GPIO_BASE + 3)
 #define WM8903_GP5              (WM8903_GPIO_BASE + 4)
 
+/* Audio-related GPIOs */
+#define TEGRA_GPIO_CDC_IRQ              TEGRA_GPIO_PX3
+#define TEGRA_GPIO_SPKR_EN              WM8903_GP2
+#define TEGRA_GPIO_HP_DET               TEGRA_GPIO_PW2
+#define TEGRA_GPIO_HP_DET               TEGRA_GPIO_PW2
+#define TEGRA_GPIO_INT_MIC_EN           TEGRA_GPIO_PX0
+#define TEGRA_GPIO_EXT_MIC_EN           TEGRA_GPIO_PX1
+
 /* Interrupt numbers from external peripherals */
 #define TPS6586X_INT_BASE       TEGRA_NR_IRQS
 #define TPS6586X_INT_END        (TPS6586X_INT_BASE + 32)

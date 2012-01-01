@@ -19,24 +19,30 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
-#include <linux/device.h>
-
-#include <mach/iomap.h>
-#include <mach/irqs.h>
-#include <mach/pinmux.h>
-#include <mach/iomap.h>
 #include <mach/io.h>
+#include <mach/iomap.h>
 #include <mach/kbc.h>
 
-#include <asm/mach-types.h>
-#include <asm/mach/arch.h>
+#include "board.h"
+#include "board-betelgeuse.h"
+#include "devices.h"
 
 #define BETELGEUSE_ROW_COUNT	1
 #define BETELGEUSE_COL_COUNT	7
 
-static int plain_kbd_keycode[] = {
-	KEY_VOLUMEUP, KEY_VOLUMEDOWN, KEY_RESERVED, KEY_RESERVED,
-	KEY_RESERVED, KEY_RESERVED, KEY_RESERVED,
+static const u32 kbd_keymap[] = {
+	KEY(0, 0, KEY_VOLUMEUP),
+	KEY(0, 1, KEY_VOLUMEDOWN),
+	KEY(0, 2, KEY_RESERVED),
+	KEY(0, 3, KEY_RESERVED),
+	KEY(0, 4, KEY_RESERVED),
+	KEY(0, 5, KEY_RESERVED),
+	KEY(0, 6, KEY_RESERVED),
+};
+
+static const struct matrix_keymap_data keymap_data = {
+	.keymap		= kbd_keymap,
+	.keymap_size	= ARRAY_SIZE(kbd_keymap),
 };
 
 static struct tegra_kbc_wake_key betelgeuse_wake_cfg[] = {
@@ -47,61 +53,32 @@ static struct tegra_kbc_wake_key betelgeuse_wake_cfg[] = {
 };
 
 static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
-	.debounce_cnt = 20,
-	.repeat_cnt = 100,
-	.scan_timeout_cnt = 100 * 32,
-	.plain_keycode = plain_kbd_keycode,
-	.fn_keycode = NULL,
-	.is_filter_keys = false,
-	.is_wake_on_any_key = false,
-	.wake_key_cnt = 1,
+	.debounce_cnt = 2,
+	.repeat_cnt = 5 * 32,
+	.wakeup = true,
+	.keymap_data = &keymap_data,
+	.use_fn_map = false,
+	.wake_cnt = 1,
 	.wake_cfg = &betelgeuse_wake_cfg[0],
-};
-
-static struct resource betelgeuse_kbc_resources[] = {
-	[0] = {
-		.start = TEGRA_KBC_BASE,
-		.end   = TEGRA_KBC_BASE + TEGRA_KBC_SIZE - 1,
-		.flags = IORESOURCE_MEM,
-	},
-	[1] = {
-		.start = INT_KBC,
-		.end   = INT_KBC,
-		.flags = IORESOURCE_IRQ,
-	},
-};
-
-struct platform_device betelgeuse_kbc_device = {
-	.name = "tegra-kbc",
-	.id = -1,
-	.dev = {
-		.platform_data = &betelgeuse_kbc_platform_data,
-	},
-	.resource = betelgeuse_kbc_resources,
-	.num_resources = ARRAY_SIZE(betelgeuse_kbc_resources),
 };
 
 int __init betelgeuse_kbc_init(void)
 {
 	struct tegra_kbc_platform_data *data = &betelgeuse_kbc_platform_data;
 	int i;
+	tegra_kbc_device.dev.platform_data = &betelgeuse_kbc_platform_data;
+	pr_info("Registering tegra-kbc\n");
 
-	pr_info("KBC: betelgeuse_kbc_init\n");
-
-	/* Setup the pin configuration information. */
-	for (i = 0; i < KBC_MAX_GPIO; i++) {
-		data->pin_cfg[i].num = 0;
-		data->pin_cfg[i].pin_type = kbc_pin_unused;
-	}
-	for (i = 0; i < BETELGEUSE_ROW_COUNT; i++) {
+	BUG_ON((KBC_MAX_ROW + KBC_MAX_COL) > KBC_MAX_GPIO);
+	for (i = 0; i < KBC_MAX_ROW; i++) {
 		data->pin_cfg[i].num = i;
-		data->pin_cfg[i].pin_type = kbc_pin_row;
+		data->pin_cfg[i].is_row = true;
 	}
 
-	for (i = 0; i < BETELGEUSE_COL_COUNT; i++) {
-		data->pin_cfg[i + BETELGEUSE_ROW_COUNT].num = i;
-		data->pin_cfg[i + BETELGEUSE_ROW_COUNT].pin_type = kbc_pin_col;
-	}
-	platform_device_register(&betelgeuse_kbc_device);
+	for (i = 0; i < KBC_MAX_COL; i++)
+		data->pin_cfg[i + KBC_MAX_ROW].num = i;
+
+	platform_device_register(&tegra_kbc_device);
+	pr_info("Registering successful tegra-kbc\n");
 	return 0;
 }
