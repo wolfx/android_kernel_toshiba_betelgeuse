@@ -115,6 +115,13 @@ config MACH_WHISTLER
        help
          Support for NVIDIA Whistler development platform
 
+config MACH_BETELGEUSE
+       bool "Betelgeuse board (Toshiba Folio 100)"
+       depends on ARCH_TEGRA_2x_SOC
+       select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+       help
+         Support for Tosbiba Folio 100
+
 config MACH_ARUBA
        bool "Aruba board"
        depends on ARCH_TEGRA_3x_SOC
