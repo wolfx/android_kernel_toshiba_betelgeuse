@@ -31,23 +31,17 @@
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
 
-struct at168_i2c_ts_platform_data at168_pdata = {
-	.gpio_reset = BETELGEUSE_TS_RESET,
-	.gpio_power = BETELGEUSE_TS_POWER,
-};
-
-static struct i2c_board_info __initdata betelgeuse_i2c_bus0_touch_info_at168[] = {
+static struct i2c_board_info __initdata betelgeuse_i2c_bus0_touch_info_egalax[] = {
 	{
-		I2C_BOARD_INFO("at168_touch", 0x5c),
+		I2C_BOARD_INFO("egalax_i2c", 0x04),
 		.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TS_IRQ),
-		.platform_data = &at168_pdata,
 	},
 };
 
 
 int __init betelgeuse_touch_register_devices(void)
 {
-	i2c_register_board_info(0, betelgeuse_i2c_bus0_touch_info_at168, 1);
+	i2c_register_board_info(0, betelgeuse_i2c_bus0_touch_info_egalax, 1);
 
 	return 0;
 }
