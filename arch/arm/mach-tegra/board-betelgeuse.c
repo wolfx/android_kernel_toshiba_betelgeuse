@@ -133,6 +133,9 @@ static void __init tegra_betelgeuse_init(void)
 
 	/* Register the power subsystem - Including the poweroff handler - Required by all the others */
 	betelgeuse_power_register_devices();
+
+	/* Register GPU devices */
+	betelgeuse_gpu_register_devices();
 	
 	/* Register the USB device */
 	betelgeuse_usb_register_devices();
@@ -142,9 +145,6 @@ static void __init tegra_betelgeuse_init(void)
 	
 	/* Register SPI devices */
 	betelgeuse_spi_register_devices();
-
-	/* Register GPU devices */
-	betelgeuse_gpu_register_devices();
 
 	/* Register Audio devices */
 	betelgeuse_audio_register_devices();
