@@ -89,9 +89,6 @@
 #define BETELGEUSE_LOW_BATT	TEGRA_GPIO_PW3 /*(0=low battery)*/
 #define BETELGEUSE_IN_S3		TEGRA_GPIO_PAA7 /*1 = in S3 */
 
-#define BETELGEUSE_USB0_VBUS		TEGRA_GPIO_PB0		/* 1= VBUS usb0 */
-#define BETELGEUSE_USB1_RESET		TEGRA_GPIO_PV1	/* 0= reset */
-
 #define BETELGEUSE_HP_DETECT	TEGRA_GPIO_PW2 	/* HeadPhone detect for audio codec: 1=Hedphone plugged */
 
 #define BETELGEUSE_NVEC_REQ	TEGRA_GPIO_PBB1	/* Set to 0 to send a command to the NVidia Embedded controller */
@@ -100,7 +97,14 @@
 #define BETELGEUSE_WAKE_KEY_POWER  TEGRA_WAKE_GPIO_PV2
 #define BETELGEUSE_WAKE_KEY_RESUME TEGRA_WAKE_GPIO_PV2
 
+// USB
+#define BETELGEUSE_USB1_RESET	TEGRA_GPIO_PV0
+#define BETELGEUSE_USB0_VBUS	TEGRA_GPIO_PD0
+#define BETELGEUSE_USB2_VBUS	TEGRA_GPIO_PD3
+
+// Sensors
 #define BETELGEUSE_TEMP_ALERT	TEGRA_GPIO_PN6
+#define AKM8975_IRQ_GPIO	TEGRA_GPIO_PV1
 
 /* The switch used to indicate rotation lock */
 //#define SW_ROTATION_LOCK 	(SW_MAX-1)
