@@ -185,7 +185,7 @@ static struct tegra_utmip_config utmi_phy_config[] = {
 		.idle_wait_delay 	= 17,
 		.elastic_limit 		= 16,
 		.term_range_adj 	= 6, 	/*  xcvr_setup = 9 with term_range_adj = 6 gives the maximum guard around */
-		.xcvr_setup 		= 9, 	/*  the USB electrical spec. This is true across fast and slow chips, high */
+		.xcvr_setup 		= 15, 	/*  the USB electrical spec. This is true across fast and slow chips, high */
 									/*  and low voltage and hot and cold temperatures */
 		.xcvr_lsfslew 		= 2,	/*  -> To slow rise and fall times in low speed eye diagrams in host mode */
 		.xcvr_lsrslew 		= 2,	/*                                                                        */
@@ -195,7 +195,7 @@ static struct tegra_utmip_config utmi_phy_config[] = {
 		.idle_wait_delay 	= 17,
 		.elastic_limit 		= 16,
 		.term_range_adj 	= 6,	/*  -> xcvr_setup = 9 with term_range_adj = 6 gives the maximum guard around */
-		.xcvr_setup 		= 9,	/*     the USB electrical spec. This is true across fast and slow chips, high */
+		.xcvr_setup 		= 8,	/*     the USB electrical spec. This is true across fast and slow chips, high */
 									/*     and low voltage and hot and cold temperatures */
 		.xcvr_lsfslew 		= 2,	/*  -> To slow rise and fall times in low speed eye diagrams in host mode */
 		.xcvr_lsrslew 		= 2,	/*                                                                        */
@@ -206,7 +206,7 @@ static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
         [0] = {
                         .instance = 0,
                         .vbus_irq = TPS6586X_INT_BASE + TPS6586X_INT_USB_DET,
-                        .vbus_gpio = TEGRA_GPIO_PB0,
+                        .vbus_gpio = BETELGEUSE_USB0_VBUS,
         },
         [1] = {
                         .instance = 1,
@@ -214,7 +214,7 @@ static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
         },
         [2] = {
                         .instance = 2,
-                        .vbus_gpio = -1,
+                        .vbus_gpio = BETELGEUSE_USB0_VBUS,
         },
 };
 
@@ -222,7 +222,7 @@ static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
 /* ULPI is managed by an SMSC3317 on the Harmony board */
 static struct tegra_ulpi_config ulpi_phy_config = {
 	// Is this even right?
-	.reset_gpio = -1, //BETELGEUSE_USB1_RESET,
+	.reset_gpio = BETELGEUSE_USB1_RESET,
 	.clk = "cdev2",
 };
 
@@ -235,13 +235,13 @@ static struct tegra_ehci_platform_data tegra_ehci_pdata[] = {
 	[1] = {
 		.phy_config = &ulpi_phy_config,
 		.operating_mode = TEGRA_USB_HOST,
-		.power_down_on_bus_suspend = 1,
+		.power_down_on_bus_suspend = 0,
 		.phy_type = TEGRA_USB_PHY_TYPE_LINK_ULPI,
 	},
 	[2] = {
 		.phy_config = &utmi_phy_config[1],
 		.operating_mode = TEGRA_USB_HOST,
-		.power_down_on_bus_suspend = 1,
+		.power_down_on_bus_suspend = 0,
 		.hotplug = 1,
 	},
 };
@@ -307,15 +307,27 @@ static struct tegra_otg_platform_data tegra_otg_pdata = {
 #define SERIAL_NUMBER_LENGTH 20
 static char usb_serial_num[SERIAL_NUMBER_LENGTH];
 
+static void betelgeuse_usb_hub_ovcur_config(void)
+{
+	tegra_gpio_enable(TEGRA_GPIO_PU3);
+	gpio_request(TEGRA_GPIO_PU3, "usb_hub_ovcur");
+	gpio_direction_input(TEGRA_GPIO_PU3);
+}
+
 int __init betelgeuse_usb_register_devices(void)
 {
 	int ret,i;
 	char *src;
 
+	ret = 0;
+
+	betelgeuse_usb_hub_ovcur_config();
+
         snprintf(usb_serial_num, sizeof(usb_serial_num), "%016llx", tegra_chip_uid());
         andusb_plat.serial_number = kstrdup(usb_serial_num, GFP_KERNEL);
 
-//	tegra_usb_phy_init(tegra_usb_phy_pdata, ARRAY_SIZE(tegra_usb_phy_pdata));
+	//tegra_usb_phy_init(tegra_usb_phy_pdata, ARRAY_SIZE(tegra_usb_phy_pdata));
+
         /* OTG should be the first to be registered */
         tegra_otg_device.dev.platform_data = &tegra_otg_pdata;
         platform_device_register(&tegra_otg_device);
@@ -323,7 +335,7 @@ int __init betelgeuse_usb_register_devices(void)
         platform_device_register(&tegra_usb_fsg_device);
         platform_device_register(&androidusb_device);
         platform_device_register(&tegra_udc_device);
-//        platform_device_register(&tegra_ehci2_device);
+        platform_device_register(&tegra_ehci2_device);
 
         tegra_ehci3_device.dev.platform_data=&tegra_ehci_pdata[2];
         platform_device_register(&tegra_ehci3_device);
@@ -340,5 +352,7 @@ int __init betelgeuse_usb_register_devices(void)
         }
         platform_device_register(&rndis_device);
 #endif
-	tegra_otg_set_host_mode(false);
+	tegra_otg_set_host_mode(true);
+
+	return ret;
 }
