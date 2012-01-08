@@ -243,7 +243,7 @@ static void __init tegra_betelgeuse_init(void)
 //	betelgeuse_setup_bluesleep();
 
 	/* Register Camera powermanagement devices */
-//	betelgeuse_camera_register_devices();
+	betelgeuse_camera_register_devices();
 #if 0
 	/* Finally, init the external memory controller and memory frequency scaling
    	   NB: This is not working on BETELGEUSE. And seems there is no point in fixing it,
