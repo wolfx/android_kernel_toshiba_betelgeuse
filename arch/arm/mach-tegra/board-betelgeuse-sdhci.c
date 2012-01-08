@@ -54,7 +54,7 @@ static struct wifi_platform_data betelgeuse_wifi_control = {
 
 
 static struct platform_device betelgeuse_wifi_device = {
-        .name           = "bcm4329_wlan",
+        .name           = "ath6kl",
         .id             = 1,
         .dev            = {
                 .platform_data = &betelgeuse_wifi_control,
@@ -148,25 +148,19 @@ static int betelgeuse_wifi_reset(int on)
         return 0;
 }
 
-
+// External SD
 static struct tegra_sdhci_platform_data tegra_sdhci_platform_data2 = {
-	.cd_gpio = -1,
-	.wp_gpio = -1,
-	.power_gpio = -1,
+	.cd_gpio = BETELGEUSE_SDHC_EXT_CD,
+	.wp_gpio = BETELGEUSE_SDHC_EXT_WP,
+	.power_gpio = BETELGEUSE_SDHC_EXT_POWER,
 	.has_no_vreg = 1,
 };
 
-static struct tegra_sdhci_platform_data tegra_sdhci_platform_data3 = {
-	.cd_gpio = BETELGEUSE_SDHC_CD,
-	.wp_gpio = -1,
-	.power_gpio = BETELGEUSE_SDHC_POWER,
-	.has_no_vreg = 1,
-};
-
+// Internal SD
 static struct tegra_sdhci_platform_data tegra_sdhci_platform_data4 = {
-	.cd_gpio = -1,
-	.wp_gpio = -1,
-	.power_gpio = -1,
+	.cd_gpio = BETELGEUSE_SDHC_INT_CD,
+	.wp_gpio = BETELGEUSE_SDHC_INT_WP,
+	.power_gpio = BETELGEUSE_SDHC_INT_POWER,
 	.has_no_vreg = 1,
 };
 
@@ -174,10 +168,8 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform_data4 = {
 
 static struct platform_device *betelgeuse_sdhci_devices[] __initdata = {
 	&tegra_sdhci_device1,
-//	&tegra_sdhci_device2,
-//have to init these out of order so that the eMMC card is registered first
 	&tegra_sdhci_device4,
-	&tegra_sdhci_device3,
+	&tegra_sdhci_device2,
 };
 
 static int __init betelgeuse_wifi_init(void)
@@ -211,11 +203,9 @@ int __init betelgeuse_sdhci_register_devices(void)
 	/* Plug in platform data */
 	tegra_sdhci_device1.dev.platform_data = &betelgeuse_wlan_data;
 	tegra_sdhci_device2.dev.platform_data = &tegra_sdhci_platform_data2;
-	tegra_sdhci_device3.dev.platform_data = &tegra_sdhci_platform_data3;
 	tegra_sdhci_device4.dev.platform_data = &tegra_sdhci_platform_data4;
 
 	ret = platform_add_devices(betelgeuse_sdhci_devices, ARRAY_SIZE(betelgeuse_sdhci_devices));
 	betelgeuse_wifi_init();
 	return ret;
-
 }

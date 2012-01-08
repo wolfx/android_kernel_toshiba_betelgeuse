@@ -66,14 +66,17 @@
 
 #define	BETELGEUSE_ENABLE_VDD_VID	TEGRA_GPIO_PD1	/* 1=enabled.  Powers HDMI. Wait 500uS to let it stabilize before returning */
 
-// TODO: Find whether there are any definitions for these?
-/*#define BETELGEUSE_SDIO0_CD		TEGRA_GPIO_PI5
-#define BETELGEUSE_SDIO0_POWER	TEGRA_GPIO_PD0*/	/* SDIO0 and SDIO2 power */
 
-#define BETELGEUSE_SDHC_CD		TEGRA_GPIO_PI5
-#define BETELGEUSE_SDHC_WP		-1	/*1=Write Protected */
-#define BETELGEUSE_SDHC_POWER	TEGRA_GPIO_PD0
+// SDIO stuff
+#define BETELGEUSE_SDHC_INT_CD		TEGRA_GPIO_PH2
+#define BETELGEUSE_SDHC_INT_WP		TEGRA_GPIO_PH3
+#define BETELGEUSE_SDHC_INT_POWER	TEGRA_GPIO_PI6
 
+#define BETELGEUSE_SDHC_EXT_CD		TEGRA_GPIO_PI5
+#define BETELGEUSE_SDHC_EXT_WP		TEGRA_GPIO_PH1
+#define BETELGEUSE_SDHC_EXT_POWER	TEGRA_GPIO_PT3
+
+// Touch screen
 #define BETELGEUSE_TS_IRQ		TEGRA_GPIO_PU4
 
 //#define BETELGEUSE_FB_NONROTATE TEGRA_GPIO_PH1 /*1 = screen rotation locked */
