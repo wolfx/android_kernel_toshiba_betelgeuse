@@ -32,7 +32,7 @@
 #define BETELGEUSE_COL_COUNT	7
 
 static const u32 kbd_keymap[] = {
-	KEY(0, 0, KEY_VOLUMEUP),
+	KEY(0, 0, KEY_POWER),
 	KEY(0, 1, KEY_VOLUMEDOWN),
 	KEY(0, 2, KEY_RESERVED),
 	KEY(0, 3, KEY_RESERVED),
@@ -51,6 +51,10 @@ static struct tegra_kbc_wake_key betelgeuse_wake_cfg[] = {
 		.row = 0,
 		.col = 0,
 	},
+	[1] = {
+		.row = 1,
+		.col = 0,
+	}
 };
 
 static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
@@ -59,7 +63,7 @@ static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
 	.wakeup = true,
 	.keymap_data = &keymap_data,
 	.use_fn_map = false,
-	.wake_cnt = 1,
+	.wake_cnt = 2,
 	.wake_cfg = &betelgeuse_wake_cfg[0],
 };
 
