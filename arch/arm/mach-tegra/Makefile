@@ -199,7 +199,6 @@ obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-aes.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-audio.o
 #obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-jack.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-bootinfo.o
-obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-bt.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-camera.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-clocks.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-gpu.o
