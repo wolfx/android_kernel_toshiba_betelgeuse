@@ -183,31 +183,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 #       endif
 #endif
 	
-	/* cdev[1-2] take the configuration (clock parents) from the pinmux config, 
-	   That is why we are setting it to NULL */
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
-#define CDEV1 "cdev1"
-#define CDEV2 "cdev2"
-#else
-#define CDEV1 "clk_dev1"
-#define CDEV2 "clk_dev2"
-#endif
-#ifdef ALC5623_IS_MASTER		
-//	{ CDEV1,   NULL,	18432000,  false},		/* used as audio CODEC MCLK */	
-	{ CDEV1,   NULL,	0,  false},		/* used as audio CODEC MCLK */	
-#else
-#       ifdef BETELGEUSE_48KHZ_AUDIO
-//        { CDEV1,   NULL /*"pll_a_out0"*/,12288000,  false},             /* used as audio CODEC MCLK */
-        { CDEV1,   NULL /*"pll_a_out0"*/,0,  false},             /* used as audio CODEC MCLK */
-#       else
-//        { CDEV1,   NULL /*"pll_a_out0"*/,11289600,  false},             /* used as audio CODEC MCLK */
-        { CDEV1,   NULL /*"pll_a_out0"*/,0,  false},             /* used as audio CODEC MCLK */
-#       endif
-#endif
-//	{ CDEV2,   NULL,	26000000,  false}, 	/* probably used as USB clock - perhaps 24mhz ?*/	
-	{ CDEV2,   NULL,	0,  false}, 	/* probably used as USB clock - perhaps 24mhz ?*/	
-
-	
 	{ "i2c1_i2c",	"pll_p_out3",	 72000000,	false},		/* tegra-i2c.0 */
 	{ "i2c2_i2c",	"pll_p_out3",	 72000000,	false},		/* tegra-i2c.1 */
 	{ "i2c3_i2c",	"pll_p_out3",	 72000000,	false},		/* tegra-i2c.2 */
@@ -248,11 +223,10 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "ndflash",	"pll_p",		108000000,	true},		/* tegra_nand -> should start disabled, but if we do, then nand stops working */
 		
 	{ "vfir",		"clk_m",		 12000000,	false},
-
-	{ "sdmmc1",		"pll_p",		 48000000,	false},		/* sdhci-tegra.0 */
-	{ "sdmmc2",		"pll_p",		 48000000,	false},		/* sdhci-tegra.1 */
-	{ "sdmmc3",		"pll_p",		 48000000,	false},		/* sdhci-tegra.2 */
-	{ "sdmmc4",		"pll_p",		 48000000,	false},		/* sdhci-tegra.3 */
+	{ "sdmmc3",             "clk_m",                12000000,       false},
+        { "sdmmc2",             "clk_m",                400000,         true},
+        { "sdmmc4",             "pll_p",                48000000,       false},         /* sdhci-tegra.3 */
+        { "sdmmc1",             "pll_p",                48000000,       true},          /* sdhci-tegra.0 */
 
 	{ "la",			"clk_m",		 12000000,	false},			
 
@@ -278,6 +252,11 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	
 	{ "kbc",		"clk_32k",			32768,	false},		/* tegra-kbc */
 	{ "blink",		"clk_32k",			32768,	false},		/* used for bluetooth */
+
+	{ "cdev1",              "pll_a_out0",           11289600,       false},         /* used as audio CODEC MCLK */
+	{ "cdev2",              "pll_p_out4",           24000000,       false},         /* probably used as USB clock - perhaps 24mhz ?*/
+
+		
 
 	{ NULL,		NULL,		0,		0},
 };
