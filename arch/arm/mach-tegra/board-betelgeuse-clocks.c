@@ -110,7 +110,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "twc",		"clk_m",		12000000,		false},
 	{ "xio",		"clk_m",		12000000,		false},
 	{ "spi",		"clk_m",		12000000,		false},
-	{ "pwm",		"clk_m",		93385,		true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
+	{ "pwm",		"clk_m",		12000000,		true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
 	{ "kfuse",		"clk_m",		12000000,		false},		/* kfuse-tegra */ /* always on - no init req */
 	{ "timer",		"clk_m",		12000000,		true},		/* timer */ /* always on - no init req */
 	{ "clk_d",		"clk_m",		24000000,		true},
@@ -122,8 +122,10 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_u",		"clk_m",		480000000,		true},		/* USB ulpi clock */
 	{ "pll_d",		"clk_m",		1000000,		true},		/* hdmi clock */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
-	{ "pll_d_out0",		"pll_d",		500000,			false},		/* hdmi clock */
-	{ "dsi",		"pll_d",		1000000,		false},		/* tegra_dc.0, tegra_dc.1 */
+	//{ "pll_d_out0"		"pll_d",		500000,			false},		/* hdmi clock */
+	//{ "dsi",		"pll_d",		1000000,		false},		/* tegra_dc.0, tegra_dc.1 */
+	{ "pll_d_out0",		"pll_d",		1000000,		true},		/* hdmi clock */
+	{ "dsi",		"pll_d_out0",		1000000,		false},		/* tegra_dc.0, tegra_dc.1 - bug on kernel 2.6.36*/
 #else
 	{ "pll_d_out0",		"pll_d",		1000000,		true},		/* hdmi clock */
 	{ "dsi",		"pll_d_out0",		1000000,		false},		/* tegra_dc.0, tegra_dc.1 - bug on kernel 2.6.36*/
@@ -144,7 +146,8 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "i2c1_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.0 */
 	{ "pll_p_out2",		"pll_p",		108000000,	true},		/* must be always on */
 	{ "sclk",		"pll_p_out2",		108000000,	true},		/* must be always on */
-	{ "avp.sclk",		"sclk",			108000000,	false},		/* must be always on */
+	//{ "avp.sclk",		"sclk",			108000000,	false},		/* must be always on */
+	{ "avp.sclk",		NULL,			108000000,	false},         /* must be always on */
 	{ "cop",		"sclk",			108000000,	false},		/* must be always on */
 	{ "hclk",		"sclk",			108000000,	true},		/* must be always on */
 	{ "pclk",		"hclk",			54000000,	true},		/* must be always on */
@@ -182,8 +185,8 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 #       define CDEV2 "clk_dev2"
 #endif
 
-	{ CDEV1,		"pll_a_out0",		11289600,	false},		/* used as audio CODEC MCLK */	
-	{ CDEV2,		"pll_p_out4",		24000000,	false}, 	/* probably used as USB clock - perhaps 24mhz ?*/	
+	{ CDEV1,		NULL,			0,		false},		/* used as audio CODEC MCLK */	
+	{ CDEV2,		NULL,			0,		false}, 	/* probably used as USB clock - perhaps 24mhz ?*/	
 	{ NULL,			NULL,			0,		0},
 };
 
