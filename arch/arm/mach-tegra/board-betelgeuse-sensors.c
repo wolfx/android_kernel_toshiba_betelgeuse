@@ -39,16 +39,16 @@ static struct akm8975_platform_data compass_platform_data = {
 };
 
 static struct i2c_board_info __initdata ak8975_device = {
-        I2C_BOARD_INFO("akm8975", 0x0c),
+        I2C_BOARD_INFO("ak8975", 0x0c),
         .irq            = TEGRA_GPIO_TO_IRQ(AKM8975_IRQ_GPIO),
-        .platform_data  = &compass_platform_data,
+        //.platform_data  = &compass_platform_data,
 };
 
 static void betelgeuse_akm8975_init(void)
 {
-        tegra_gpio_enable(AKM8975_IRQ_GPIO);
-        gpio_request(AKM8975_IRQ_GPIO, "akm8975");
-        gpio_direction_input(AKM8975_IRQ_GPIO);
+        //tegra_gpio_enable(AKM8975_IRQ_GPIO);
+        //gpio_request(AKM8975_IRQ_GPIO, "ak8975");
+        //gpio_direction_input(AKM8975_IRQ_GPIO);
         i2c_register_board_info(0, &ak8975_device, 1);
 }
 
@@ -89,4 +89,5 @@ int __init betelgeuse_sensors_register_devices(void)
 {
 	betelgeuse_akm8975_init();
 	betelgeuse_adt7461_init();
+	return 0;
 }
