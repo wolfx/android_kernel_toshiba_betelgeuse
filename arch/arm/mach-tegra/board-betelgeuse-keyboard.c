@@ -1,126 +1,85 @@
-/* OK */
 /*
- * arch/arm/mach-tegra/board-betelgeuse-keyboard.c
+ * Copyright (C) 2010 NVIDIA, Inc.
+ *               2011 Artem Makhutov <artem@makhutov.org>
  *
- * Copyright (C) 2011 Eduardo José Tagle <ejtagle@tutopia.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ * 02111-1307, USA
  */
 
+#include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
+#include <mach/io.h>
+#include <mach/iomap.h>
+#include <mach/kbc.h>
 
-#include <linux/gpio_keys.h>
-//#include <linux/gpio_shortlong_key.h>
-#include <linux/leds.h>
-#include <linux/leds_pwm.h>
-
-#include <linux/gpio.h>
-#include <asm/mach-types.h>
-
+#include "board.h"
 #include "board-betelgeuse.h"
-#include "gpio-names.h"
+#include "devices.h"
 
-static struct gpio_keys_button betelgeuse_keys[] = {
+#define BETELGEUSE_ROW_COUNT	1
+#define BETELGEUSE_COL_COUNT	7
+
+static const u32 kbd_keymap[] = {
+	KEY(0, 0, KEY_VOLUMEUP),
+	KEY(0, 1, KEY_VOLUMEDOWN),
+	KEY(0, 2, KEY_RESERVED),
+	KEY(0, 3, KEY_RESERVED),
+	KEY(0, 4, KEY_RESERVED),
+	KEY(0, 5, KEY_RESERVED),
+	KEY(0, 6, KEY_RESERVED),
+};
+
+static const struct matrix_keymap_data keymap_data = {
+	.keymap		= kbd_keymap,
+	.keymap_size	= ARRAY_SIZE(kbd_keymap),
+};
+
+static struct tegra_kbc_wake_key betelgeuse_wake_cfg[] = {
 	[0] = {
-		.gpio = BETELGEUSE_KEY_VOLUMEUP,
-		.active_low = true,
-		.debounce_interval = 10,
-		.wakeup = true,		
-		.code = KEY_VOLUMEUP,
-		.type = EV_KEY,		
-		.desc = "volume up",
-	},
-	[1] = {
-		.gpio = BETELGEUSE_KEY_VOLUMEDOWN,
-		.active_low = true,
-		.debounce_interval = 10,
-		.wakeup = true,		
-		.code = KEY_VOLUMEDOWN,
-		.type = EV_KEY,		
-		.desc = "volume down",
-	},
-	[2] = {
-		.gpio = BETELGEUSE_KEY_POWER,
-		.active_low = true,
-		.debounce_interval = 50,
-		.wakeup = true,		
-		.code = KEY_POWER,
-		.type = EV_KEY,		
-		.desc = "power",
-	},
-	[3] = {
-		.gpio = BETELGEUSE_KEY_BACK,
-		.active_low = true,
-		.debounce_interval = 10,
-		.wakeup = true,		
-		.code = KEY_BACK,
-		.type = EV_KEY,		
-		.desc = "back",
+		.row = 0,
+		.col = 0,
 	},
 };
 
-
-static struct gpio_keys_platform_data betelgeuse_keys_platform_data = {
-	.buttons 	= betelgeuse_keys,
-	.nbuttons 	= ARRAY_SIZE(betelgeuse_keys),
-	.rep		= false, /* auto repeat enabled */
+static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
+	.debounce_cnt = 2,
+	.repeat_cnt = 5 * 32,
+	.wakeup = true,
+	.keymap_data = &keymap_data,
+	.use_fn_map = false,
+	.wake_cnt = 1,
+	.wake_cfg = &betelgeuse_wake_cfg[0],
 };
 
-static struct platform_device betelgeuse_keys_device = {
-	.name 		= "gpio-keys",
-	.id 		= 0,
-	.dev		= {
-		.platform_data = &betelgeuse_keys_platform_data,
-	},
-};
-
-static struct gpio_led betelgeuse_gpio_leds[] = {
-	{
-                .name   = "cpu",
-                .gpio   = TEGRA_GPIO_PI3,
-		.default_trigger = "heartbeat",
-		.active_low = 0,
-                .retain_state_suspended = 0,
-        },
-	{
-                .name = "cpu-busy",
-                .gpio = TEGRA_GPIO_PI4,
-                .active_low = 0,
-                .retain_state_suspended = 0,
-                .default_state = LEDS_GPIO_DEFSTATE_OFF,
-        },
-};
-
-static struct gpio_led_platform_data betelgeuse_led_data = {
-        .leds   = betelgeuse_gpio_leds,
-        .num_leds       = ARRAY_SIZE(betelgeuse_gpio_leds),
-};
-
-static struct platform_device betelgeuse_leds_gpio = {
-        .name   = "leds-gpio",
-        .id     = -1,
-        .dev    = {
-                .platform_data = &betelgeuse_led_data,
-        },
-};
-
-static struct platform_device *betelgeuse_pmu_devices[] __initdata = {
-	&betelgeuse_keys_device,
-	&betelgeuse_leds_gpio,
-};
-
-/* Register all keyboard devices */
 int __init betelgeuse_keyboard_register_devices(void)
 {
-	return platform_add_devices(betelgeuse_pmu_devices, ARRAY_SIZE(betelgeuse_pmu_devices));
-}
+	struct tegra_kbc_platform_data *data = &betelgeuse_kbc_platform_data;
+	int i;
+	tegra_kbc_device.dev.platform_data = &betelgeuse_kbc_platform_data;
+	pr_info("Registering tegra-kbc\n");
 
+	BUG_ON((KBC_MAX_ROW + KBC_MAX_COL) > KBC_MAX_GPIO);
+	for (i = 0; i < KBC_MAX_ROW; i++) {
+		data->pin_cfg[i].num = i;
+		data->pin_cfg[i].is_row = true;
+	}
+
+	for (i = 0; i < KBC_MAX_COL; i++)
+		data->pin_cfg[i + KBC_MAX_ROW].num = i;
+
+	platform_device_register(&tegra_kbc_device);
+	pr_info("Registering successful tegra-kbc\n");
+	return 0;
+}
