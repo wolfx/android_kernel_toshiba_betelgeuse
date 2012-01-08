@@ -147,7 +147,7 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_gpu_register_devices();
 
 	/* Register Audio devices */
-//	betelgeuse_audio_register_devices();
+	betelgeuse_audio_register_devices();
 
 	/* Register Jack devices */
 //	betelgeuse_jack_register_devices();
@@ -175,8 +175,8 @@ static void __init tegra_betelgeuse_init(void)
 	
 	/* Register Bluetooth powermanagement devices */
 	//betelgeuse_bt_pm_register_devices();
-	betelgeuse_bt_rfkill();
-	betelgeuse_setup_bluesleep();
+//	betelgeuse_bt_rfkill();
+//	betelgeuse_setup_bluesleep();
 
 	/* Register Camera powermanagement devices */
 //	betelgeuse_camera_register_devices();

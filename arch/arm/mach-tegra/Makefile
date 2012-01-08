@@ -196,7 +196,7 @@ obj-${CONFIG_MACH_ADAM}              += board-adam-pm-gsm.o
 
 # Betelgeuse arch drivers
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-aes.o
-#obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-audio.o
+obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-audio.o
 #obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-jack.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-bootinfo.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-bt.o

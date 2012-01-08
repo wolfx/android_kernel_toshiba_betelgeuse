@@ -40,7 +40,6 @@
 #include <mach/irqs.h>
 #include <mach/iomap.h>
 #include <mach/gpio.h>
-#include <mach/tegra2_i2s.h>
 #include <mach/spdif.h>
 #include <mach/audio.h>  
 #if LINUX_VERSION_CODE == KERNEL_VERSION(2,6,36)
@@ -80,10 +79,10 @@ static struct i2c_board_info __initdata wm8903_board_info[] = {
 
 static struct tegra_wm8903_platform_data betelgeuse_audio_pdata = {
 	.gpio_spkr_en           = TEGRA_GPIO_SPKR_EN,
-	.gpio_hp_det            = TEGRA_GPIO_HP_DET,
+	.gpio_hp_det            = -1,
 	.gpio_hp_mute           = -1,
-	.gpio_int_mic_en        = TEGRA_GPIO_INT_MIC_EN,
-	.gpio_ext_mic_en        = TEGRA_GPIO_EXT_MIC_EN,
+	.gpio_int_mic_en        = -1,
+	.gpio_ext_mic_en        = -1,
 };
 
 static struct platform_device betelgeuse_audio_device = {

@@ -103,9 +103,6 @@
 #define BETELGEUSE_TEMP_ALERT	TEGRA_GPIO_PN6
 #define AKM8975_IRQ_GPIO	TEGRA_GPIO_PV1
 
-// Audio
-#define TEGRA_GPIO_CDC_IRQ	TEGRA_GPIO_PX3
-
 // WM8903 gpios
 #define WM8903_GPIO_BASE	(TEGRA_NR_GPIOS + 32)
 #define WM8903_GP1		(WM8903_GPIO_BASE + 0)
@@ -113,6 +110,10 @@
 #define WM8903_GP3		(WM8903_GPIO_BASE + 2)
 #define WM8903_GP4		(WM8903_GPIO_BASE + 3)
 #define WM8903_GP5		(WM8903_GPIO_BASE + 4)
+
+// Audio
+#define TEGRA_GPIO_CDC_IRQ	TEGRA_GPIO_PX3
+#define TEGRA_GPIO_SPKR_EN	WM8903_GP2
 
 /* The switch used to indicate rotation lock */
 //#define SW_ROTATION_LOCK 	(SW_MAX-1)
