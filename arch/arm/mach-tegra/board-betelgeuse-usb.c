@@ -214,7 +214,7 @@ static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
         },
         [2] = {
                         .instance = 2,
-                        .vbus_gpio = BETELGEUSE_USB0_VBUS,
+                        .vbus_gpio = BETELGEUSE_USB2_VBUS,
         },
 };
 
@@ -335,6 +335,8 @@ int __init betelgeuse_usb_register_devices(void)
         platform_device_register(&tegra_usb_fsg_device);
         platform_device_register(&androidusb_device);
         platform_device_register(&tegra_udc_device);
+
+	tegra_ehci2_device.dev.platform_data=&tegra_ehci_pdata[1];
         platform_device_register(&tegra_ehci2_device);
 
         tegra_ehci3_device.dev.platform_data=&tegra_ehci_pdata[2];
