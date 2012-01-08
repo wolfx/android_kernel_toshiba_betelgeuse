@@ -190,12 +190,6 @@ static void __init tegra_betelgeuse_init(void)
 	
 }
 
-static void __init tegra_betelgeuse_reserve(void)
-{
-	if (memblock_reserve(0x0, 4096) < 0)
-		pr_warn("Cannot reserve first 4K of memory for safety\n");
-}
-
 static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
 	struct tag *tags, char **cmdline, struct meminfo *mi)
 {
@@ -211,7 +205,6 @@ MACHINE_START(LEGACY, "Toshiba Folio 100")
 	.init_irq       = tegra_init_irq,
 	.timer          = &tegra_timer,
 	.init_machine	= tegra_betelgeuse_init,
-	.reserve		= tegra_betelgeuse_reserve,
 	.fixup			= tegra_betelgeuse_fixup,
 MACHINE_END
 
