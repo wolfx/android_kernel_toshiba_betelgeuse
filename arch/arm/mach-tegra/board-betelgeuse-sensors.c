@@ -24,35 +24,33 @@
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
 #include <linux/adt7461.h>
+#include <linux/akm8975.h>
 
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
 #include "cpu-tegra.h"
 
-static struct i2c_board_info __initdata betelgeuse_i2c_bus0_sensor_info[] = {
-	{
-		I2C_BOARD_INFO("bq20z75-battery", 0x0B),
-		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PH2),
-	},
-	{
-		I2C_BOARD_INFO("so340010_kbd", 0x2c),
-		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PV6),
-	},
+static struct akm8975_platform_data compass_platform_data = {
+        .intr = TEGRA_GPIO_TO_IRQ(AKM8975_IRQ_GPIO),
+        .init = NULL,
+        .exit = NULL,
+        .power_on = NULL,
+        .power_off = NULL,
 };
 
-static struct i2c_board_info __initdata betelgeuse_i2c_bus2_sensor_info[] = {
-	{
-		I2C_BOARD_INFO("isl29023", 0x44),
-		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PV5),
-	},
-	{
-		I2C_BOARD_INFO("lis3lv02d", 0x1C),
-		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PJ0),
-	},
-	{
-		I2C_BOARD_INFO("mmc31xx", 0x30),
-	},
+static struct i2c_board_info __initdata ak8975_device = {
+        I2C_BOARD_INFO("akm8975", 0x0c),
+        .irq            = TEGRA_GPIO_TO_IRQ(AKM8975_IRQ_GPIO),
+        .platform_data  = &compass_platform_data,
 };
+
+static void betelgeuse_akm8975_init(void)
+{
+        tegra_gpio_enable(AKM8975_IRQ_GPIO);
+        gpio_request(AKM8975_IRQ_GPIO, "akm8975");
+        gpio_direction_input(AKM8975_IRQ_GPIO);
+        i2c_register_board_info(0, &ak8975_device, 1);
+}
 
 static struct adt7461_platform_data betelgeuse_adt7461_pdata = {
 	.supported_hwrev = true,
@@ -76,32 +74,19 @@ static struct i2c_board_info __initdata betelgeuse_i2c_bus4_sensor_info[] = {
 	},
 };
 
-int __init betelgeuse_sensors_register_devices(void)
+static void betelgeuse_adt7461_init(void)
 {
-	tegra_gpio_enable(TEGRA_GPIO_PV5);
-	gpio_request(TEGRA_GPIO_PV5, "isl29023_irq");
-	gpio_direction_input(TEGRA_GPIO_PV5);
-
-	tegra_gpio_enable(TEGRA_GPIO_PH2);
-	gpio_request(TEGRA_GPIO_PH2, "ac_present_irq");
-	gpio_direction_input(TEGRA_GPIO_PH2);
-
-	tegra_gpio_enable(TEGRA_GPIO_PJ0);
-	gpio_request(TEGRA_GPIO_PJ0, "lis33de_irq");
-	gpio_direction_input(TEGRA_GPIO_PJ0);
-
-	tegra_gpio_enable(TEGRA_GPIO_PV6);
-	gpio_request(TEGRA_GPIO_PV6, "so340010_kbd_irq");
-	gpio_direction_input(TEGRA_GPIO_PV6);
-	
-		tegra_gpio_enable(BETELGEUSE_TEMP_ALERT);
+	tegra_gpio_enable(BETELGEUSE_TEMP_ALERT);
 	gpio_request(BETELGEUSE_TEMP_ALERT, "adt7461_temp_alert_irq");
 	gpio_direction_input(BETELGEUSE_TEMP_ALERT);
 
-	i2c_register_board_info(0, betelgeuse_i2c_bus0_sensor_info,
-	                        ARRAY_SIZE(betelgeuse_i2c_bus0_sensor_info));
+
 	i2c_register_board_info(4, betelgeuse_i2c_bus4_sensor_info,
 	                        ARRAY_SIZE(betelgeuse_i2c_bus4_sensor_info));
-	return i2c_register_board_info(2, betelgeuse_i2c_bus2_sensor_info,
-	                               ARRAY_SIZE(betelgeuse_i2c_bus2_sensor_info));
+}
+
+int __init betelgeuse_sensors_register_devices(void)
+{
+	betelgeuse_akm8975_init();
+	betelgeuse_adt7461_init();
 }
