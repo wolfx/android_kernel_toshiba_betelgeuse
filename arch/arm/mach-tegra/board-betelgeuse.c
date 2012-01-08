@@ -170,8 +170,8 @@ static void __init tegra_betelgeuse_init(void)
 	/* Register accelerometer device */
 	betelgeuse_sensors_register_devices();
 	
-	/* Register wlan powermanagement devices */
-//	betelgeuse_wlan_pm_register_devices();
+	/* Register wlan devices */
+	betelgeuse_wlan_register_devices();
 	
 	/* Register Bluetooth powermanagement devices */
 	//betelgeuse_bt_pm_register_devices();

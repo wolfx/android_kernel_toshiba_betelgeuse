@@ -34,6 +34,10 @@
 #include "devices.h"
 #include "board-betelgeuse.h"
 
+/* Make sure they are NOT trying to compile with a nonworking config */
+#ifdef CONFIG_MMC_EMBEDDED_SDIO
+#error  DISABLE MMC EMBEDDED SDIO, or WLAN wont work amd SD Cards could stop responding...
+#endif
 
 static void (*wlan_status_cb)(int card_present, void *dev_id) = NULL;
 static void *wlan_status_cb_devid = NULL;
@@ -206,6 +210,6 @@ int __init betelgeuse_sdhci_register_devices(void)
 	tegra_sdhci_device4.dev.platform_data = &tegra_sdhci_platform_data4;
 
 	ret = platform_add_devices(betelgeuse_sdhci_devices, ARRAY_SIZE(betelgeuse_sdhci_devices));
-	betelgeuse_wifi_init();
+	//betelgeuse_wifi_init();
 	return ret;
 }

@@ -79,14 +79,12 @@
 // Touch screen
 #define BETELGEUSE_TS_IRQ		TEGRA_GPIO_PU4
 
-//#define BETELGEUSE_FB_NONROTATE TEGRA_GPIO_PH1 /*1 = screen rotation locked */
-
-#define BETELGEUSE_WLAN_POWER 	TEGRA_GPIO_PK5
-#define BETELGEUSE_WLAN_RESET 	TEGRA_GPIO_PK6
-
+// Wifi
+#define BETELGEUSE_WLAN_POWER 		TEGRA_GPIO_PK5
+#define BETELGEUSE_WLAN_RESET		TEGRA_GPIO_PK6
 #define BETELGEUSE_BT_RST		TEGRA_GPIO_PU0
 
-#define BETELGEUSE_LOW_BATT	TEGRA_GPIO_PW3 /*(0=low battery)*/
+#define BETELGEUSE_LOW_BATT		TEGRA_GPIO_PW3 /*(0=low battery)*/
 #define BETELGEUSE_IN_S3		TEGRA_GPIO_PAA7 /*1 = in S3 */
 
 #define BETELGEUSE_HP_DETECT	TEGRA_GPIO_PW2 	/* HeadPhone detect for audio codec: 1=Hedphone plugged */
@@ -141,7 +139,7 @@ extern int betelgeuse_keyboard_register_devices(void);
 extern int betelgeuse_touch_register_devices(void);
 extern int betelgeuse_sdhci_register_devices(void);
 extern int betelgeuse_sensors_register_devices(void);
-extern int betelgeuse_wlan_pm_register_devices(void);
+extern int betelgeuse_wlan_register_devices(void);
 extern void betelgeuse_setup_bluesleep(void);
 extern void betelgeuse_bt_rfkill(void);
 extern int betelgeuse_camera_register_devices(void);
