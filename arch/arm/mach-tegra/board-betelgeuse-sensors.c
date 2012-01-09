@@ -66,23 +66,18 @@ static struct adt7461_platform_data betelgeuse_adt7461_pdata = {
 };
 
 
-static struct i2c_board_info __initdata betelgeuse_i2c_bus4_sensor_info[] = {
-	{
-		I2C_BOARD_INFO("adt7461", 0x4C),
-		.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TEMP_ALERT),
-		.platform_data = &betelgeuse_adt7461_pdata,
-	},
+static struct i2c_board_info __initdata adt7461_device = {
+	I2C_BOARD_INFO("adt7461", 0x4C),
+	.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TEMP_ALERT),
+	.platform_data = &betelgeuse_adt7461_pdata,
 };
 
 static void betelgeuse_adt7461_init(void)
 {
-	tegra_gpio_enable(BETELGEUSE_TEMP_ALERT);
 	gpio_request(BETELGEUSE_TEMP_ALERT, "adt7461_temp_alert_irq");
 	gpio_direction_input(BETELGEUSE_TEMP_ALERT);
 
-
-	i2c_register_board_info(4, betelgeuse_i2c_bus4_sensor_info,
-	                        ARRAY_SIZE(betelgeuse_i2c_bus4_sensor_info));
+	i2c_register_board_info(4, &adt7461_device, 1);
 }
 
 int __init betelgeuse_sensors_register_devices(void)

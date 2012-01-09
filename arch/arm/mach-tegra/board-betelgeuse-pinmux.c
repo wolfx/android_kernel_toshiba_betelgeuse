@@ -186,33 +186,30 @@ static __initdata struct tegra_drive_pingroup_config betelgeuse_drive_pinmux[] =
 };
 
 static struct tegra_gpio_table gpio_table[] = {
-	{ .gpio = BETELGEUSE_BT_RESET,                  .enable = true },
-	{ .gpio = BETELGEUSE_KEY_VOLUMEUP,              .enable = true },
-	{ .gpio = BETELGEUSE_KEY_VOLUMEDOWN,    .enable = true },
-	{ .gpio = BETELGEUSE_KEY_POWER,         .enable = true },
-	{ .gpio = BETELGEUSE_KEY_BACK,                  .enable = true },
-	{ .gpio = BETELGEUSE_CAMERA_POWER,              .enable = true },
-	{ .gpio = BETELGEUSE_BL_ENB,                    .enable = true },
-	{ .gpio = BETELGEUSE_LVDS_SHUTDOWN,     .enable = true },
-	{ .gpio = BETELGEUSE_EN_VDD_PANEL,              .enable = true },
-	{ .gpio = BETELGEUSE_BL_VDD,                    .enable = true },
-	{ .gpio = BETELGEUSE_BL_PWM,                    .enable = false }, /* We want the PWM function here! */
-	{ .gpio = BETELGEUSE_HDMI_ENB,                  .enable = true },
-	{ .gpio = BETELGEUSE_HDMI_HPD,                  .enable = true },
-	{ .gpio = BETELGEUSE_ENABLE_VDD_VID,    .enable = true },
+	{ .gpio = BETELGEUSE_BT_RESET,			.enable = true },
+	{ .gpio = BETELGEUSE_CAMERA_POWER,		.enable = true },
+	{ .gpio = BETELGEUSE_BL_ENB,			.enable = true },
+	{ .gpio = BETELGEUSE_LVDS_SHUTDOWN,		.enable = true },
+	{ .gpio = BETELGEUSE_EN_VDD_PANEL,		.enable = true },
+	{ .gpio = BETELGEUSE_BL_VDD,			.enable = true },
+	{ .gpio = BETELGEUSE_BL_PWM,			.enable = false }, /* We want the PWM function here! */
+	{ .gpio = BETELGEUSE_HDMI_ENB,			.enable = true },
+	{ .gpio = BETELGEUSE_HDMI_HPD,			.enable = true },
+	{ .gpio = BETELGEUSE_ENABLE_VDD_VID,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_INT_CD,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_INT_WP,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_INT_POWER,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_EXT_CD,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_EXT_WP,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_EXT_POWER,		.enable = true },
-	{ .gpio = BETELGEUSE_TS_IRQ,                    .enable = true },
+	{ .gpio = BETELGEUSE_TS_IRQ,			.enable = true },
 	{ .gpio = BETELGEUSE_WLAN_POWER,		.enable = true },
 	{ .gpio = BETELGEUSE_WLAN_RESET,		.enable = true },
-	{ .gpio = BETELGEUSE_LOW_BATT,          .enable = true },
-	{ .gpio = BETELGEUSE_IN_S3,                     .enable = true },
-/*      { .gpio = BETELGEUSE_USB1_RESET,                .enable = true },*/
-	{ .gpio = BETELGEUSE_HP_DETECT,         .enable = true },
+	{ .gpio = BETELGEUSE_LOW_BATT,			.enable = true },
+	{ .gpio = BETELGEUSE_IN_S3,			.enable = true },
+/*      { .gpio = BETELGEUSE_USB1_RESET,		.enable = true },*/
+	{ .gpio = BETELGEUSE_HP_DETECT,			.enable = true },
+	{ .gpio = BETELGEUSE_TEMP_ALERT,		.enable = true },
 };
 
 void __init betelgeuse_pinmux_init(void)
