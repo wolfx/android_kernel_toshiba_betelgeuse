@@ -217,5 +217,3 @@ obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wake.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wdt.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wlan.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse.o
-# betelgeuse power management drivers
-obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-pm-camera.o
