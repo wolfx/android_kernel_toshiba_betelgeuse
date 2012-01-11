@@ -27,7 +27,8 @@
 
 #ifdef NVEC_PS2_DEBUG
 #define NVEC_PHD(str, buf, len) \
-	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, 16, 1, buf, len, false)
+	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+			16, 1, buf, len, false)
 #else
 #define NVEC_PHD(str, buf, len)
 #endif
@@ -97,9 +98,9 @@ static int __devinit nvec_mouse_probe(struct platform_device *pdev)
 	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
 	struct serio *ser_dev = kzalloc(sizeof(struct serio), GFP_KERNEL);
 
-	ser_dev->id.type = SERIO_8042;
+	ser_dev->id.type = SERIO_PS_PSTHRU;
 	ser_dev->write = ps2_sendcommand;
-	ser_dev->start= ps2_startstreaming;
+	ser_dev->start = ps2_startstreaming;
 	ser_dev->stop = ps2_stopstreaming;
 
 	strlcpy(ser_dev->name, "nvec mouse", sizeof(ser_dev->name));
