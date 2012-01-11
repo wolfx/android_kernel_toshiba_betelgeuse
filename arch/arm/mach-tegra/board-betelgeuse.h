@@ -136,5 +136,6 @@ extern int betelgeuse_wlan_register_devices(void);
 extern void betelgeuse_setup_bluesleep(void);
 extern void betelgeuse_bt_rfkill(void);
 extern int betelgeuse_camera_register_devices(void);
+extern int betelgeuse_nvec_register_devices(void);
 
 #endif
