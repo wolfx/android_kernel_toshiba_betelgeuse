@@ -43,6 +43,7 @@
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
 #include "devices.h"
+#include "../../../drivers/staging/nvec2/nvec.h"
 
 
 #define PMC_CTRL		0x0
@@ -509,7 +510,7 @@ static void reg_off(const char *reg)
 static void betelgeuse_power_off(void)
 {
 	/* Power down through NvEC */
-	//nvec_poweroff();
+	nvec_poweroff();
 
 	/* Turn off main supply */
 	tps6586x_power_off();
