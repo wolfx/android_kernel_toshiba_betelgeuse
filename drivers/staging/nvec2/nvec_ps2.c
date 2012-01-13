@@ -18,7 +18,7 @@
 #include <linux/serio.h>
 #include <linux/delay.h>
 #include <linux/platform_device.h>
-#include <linux/mfd/nvec.h>
+#include "nvec.h"
 
 struct nvec_ps2 {
 	struct notifier_block 	notifier;

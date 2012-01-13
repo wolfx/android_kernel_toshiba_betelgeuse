@@ -14,14 +14,14 @@
  */
 
 #include <linux/module.h>
-#include <linux/power/nvec_power.h>
+#include "nvec_power.h"
 #include <linux/platform_device.h>
 #include <linux/err.h>
 #include <linux/power_supply.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/delay.h>
-#include <linux/mfd/nvec.h>
+#include "nvec.h"
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 #include <linux/irq.h>

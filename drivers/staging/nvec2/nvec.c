@@ -51,7 +51,7 @@
 #include <asm/atomic.h>
 #include <mach/iomap.h>
 #include <mach/clk.h>
-#include <linux/mfd/nvec.h>
+#include "nvec.h"
 
 /*
  * interface for communicating with  an Embedded Controller (EC).

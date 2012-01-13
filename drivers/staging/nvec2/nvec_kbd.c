@@ -17,7 +17,7 @@
 #include <linux/input.h>
 #include <linux/delay.h>
 #include <linux/platform_device.h>
-#include <linux/mfd/nvec.h>
+#include "nvec.h"
 #include "nvec_keytable.h"
 
 /* Compute the range of scan codes covered by the tables */
