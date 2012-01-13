@@ -17,6 +17,7 @@
 /* #define DEBUG */
 
 #include <linux/kernel.h>
+#include <linux/module.h>
 #include <linux/atomic.h>
 #include <linux/clk.h>
 #include <linux/completion.h>
@@ -28,7 +29,6 @@
 #include <linux/irq.h>
 #include <linux/list.h>
 #include <linux/mfd/core.h>
-#include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/notifier.h>
 #include <linux/platform_device.h>
@@ -36,7 +36,6 @@
 #include <linux/spinlock.h>
 #include <linux/workqueue.h>
 
-#include <linux/i2c.h>
 #include <linux/i2c-tegra.h>
 #include <mach/clk.h>
 #include <mach/iomap.h>
@@ -657,13 +656,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
 	return IRQ_HANDLED;
 }
 
-static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
-{
-	disable_irq(nvec->irq);
-	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
-	clk_disable(nvec->clk);
-}
-
 static void nvec_power_off(void)
 {
 	nvec_write_async(nvec_power_handle, EC_DISABLE_EVENT_REPORTING, 3);
@@ -694,25 +686,25 @@ static int __devinit tegra_nvec_probe(struct platform_device *pdev)
 
 	adap = i2c_get_adapter(pdata->adapter);
 	if (adap == NULL) {
-		dev_err(&pdev->dev, "failed to get i2c adapter\n");
-		return -ENOMEM;
+		dev_err(nvec->dev, "failed to get i2c adapter\n");
+		return -ENODEV;
 	}
-
 	i2c_bus = i2c_get_adapdata(adap);
+	if (i2c_bus == NULL) {
+		dev_err(nvec->dev, "failed to get i2c bus\n");
+		return -ENODEV;
+	}
 	i2c_dev = i2c_bus->dev;
-	nvec->rx = &nvec->msg_pool[0];
+
 	nvec->base = i2c_dev->base;
 	nvec->irq = i2c_dev->irq;
 	nvec->clk = i2c_dev->clk;
 	nvec->i2c_addr = i2c_dev->slave_addr;
+	nvec->rx = &nvec->msg_pool[0];
 
 	dev_info(&pdev->dev, "using adapter %s.%d\n", adap->name, i2c_dev->cont_id);
 	dev_info(&pdev->dev, "slave at i2c address 0x%x using irq 0x%x\n",
-		i2c_dev->slave_addr, nvec->gpio);
-
-	err = gpio_request(nvec->gpio, "nvec gpio");
-	if (err < 0)
-		dev_err(nvec->dev, "couldn't request gpio\n");
+		 i2c_dev->slave_addr, nvec->gpio);
 
 	ATOMIC_INIT_NOTIFIER_HEAD(&nvec->notifier_list);
 
@@ -727,6 +719,12 @@ static int __devinit tegra_nvec_probe(struct platform_device *pdev)
 	INIT_WORK(&nvec->tx_work, nvec_request_master);
 	nvec->wq = alloc_workqueue("nvec", WQ_NON_REENTRANT, 2);
 
+	err = gpio_request_one(nvec->gpio, GPIOF_OUT_INIT_HIGH, "nvec gpio");
+	if (err < 0) {
+		dev_err(nvec->dev, "couldn't request gpio\n");
+		goto failed;
+	}
+
 	err = request_irq(nvec->irq, nvec_interrupt, 0, "nvec", nvec);
 	if (err) {
 		dev_err(nvec->dev, "couldn't request irq\n");
@@ -734,10 +732,6 @@ static int __devinit tegra_nvec_probe(struct platform_device *pdev)
 	}
 
 	clk_enable(nvec->clk);
-
-	gpio_direction_output(nvec->gpio, 1);
-	gpio_set_value(nvec->gpio, 1);
-	tegra_gpio_enable(nvec->gpio);
 
 	/* enable event reporting */
 	nvec_write_async(nvec, EC_ENABLE_EVENT_REPORTING,
@@ -807,7 +801,9 @@ static int tegra_nvec_suspend(struct platform_device *pdev, pm_message_t state)
 	msg = nvec_write_sync(nvec, "\x04\x02", 2);
 	nvec_msg_free(nvec, msg);
 
-	nvec_disable_i2c_slave(nvec);
+	disable_irq(nvec->irq);
+	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+	clk_disable(nvec->clk);
 
 	return 0;
 }
@@ -815,9 +811,12 @@ static int tegra_nvec_suspend(struct platform_device *pdev, pm_message_t state)
 static int tegra_nvec_resume(struct platform_device *pdev)
 {
 	struct nvec_chip *nvec = platform_get_drvdata(pdev);
+
 	dev_dbg(nvec->dev, "resuming\n");
+
 	clk_enable(nvec->clk);
 	enable_irq(nvec->irq);
+
 	/* when making the next line nvec_write_sync, resume seems to stop working */
 	nvec_write_async(nvec, EC_ENABLE_EVENT_REPORTING, 3);
 

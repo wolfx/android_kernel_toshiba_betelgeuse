@@ -111,74 +111,6 @@
 #define SL_ADDR1(addr) (addr & 0xff)
 #define SL_ADDR2(addr) ((addr >> 8) & 0xff)
 
-
-
-struct tegra_i2c_dev;
-
-struct tegra_i2c_bus {
-	struct tegra_i2c_dev *dev;
-	const struct tegra_pingroup_config *mux;
-	int mux_len;
-	unsigned long bus_clk_rate;
-	struct i2c_adapter adapter;
-	int scl_gpio;
-	int sda_gpio;
-};
-
-/**
- * struct tegra_i2c_dev	- per device i2c context
- * @dev: device reference for power management
- * @adapter: core i2c layer adapter information
- * @clk: clock reference for i2c controller
- * @i2c_clk: clock reference for i2c bus
- * @iomem: memory resource for registers
- * @base: ioremapped registers cookie
- * @cont_id: i2c controller id, used for for packet header
- * @irq: irq number of transfer complete interrupt
- * @is_dvc: identifies the DVC i2c controller, has a different register layout
- * @msg_complete: transfer completion notifier
- * @msg_err: error code for completed message
- * @msg_buf: pointer to current message data
- * @msg_buf_remaining: size of unsent data in the message buffer
- * @msg_read: identifies read transfers
- * @bus_clk_rate: current i2c bus clock rate
- * @is_suspended: prevents i2c controller accesses after suspend is called
- */
-struct tegra_i2c_dev {
-	struct device *dev;
-	struct clk *clk;
-	struct resource *iomem;
-	struct rt_mutex dev_lock;
-	spinlock_t clk_lock;
-	void __iomem *base;
-	int cont_id;
-	int irq;
-	bool irq_disabled;
-	bool controller_enabled;
-	int is_dvc;
-	bool is_slave;
-	struct completion msg_complete;
-	int msg_err;
-	u8 *msg_buf;
-	u32 packet_header;
-	u32 payload_size;
-	u32 io_header;
-	size_t msg_buf_remaining;
-	int msg_read;
-	struct i2c_msg *msgs;
-	int msg_add;
-	int msgs_num;
-	bool is_suspended;
-	int bus_count;
-	const struct tegra_pingroup_config *last_mux;
-	int last_mux_len;
-	unsigned long last_bus_clk_rate;
-	u16 slave_addr;
-	bool is_clkon_always;
-	struct tegra_i2c_bus busses[1];
-	int (*arb_recovery)(int scl_gpio, int sda_gpio);
-};
-
 static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned long reg)
 {
 	writel(val, i2c_dev->base + reg);
@@ -854,12 +786,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
 		goto err_free;
 	}
 
-	ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
-	if (ret) {
-		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
-		goto err_free;
-	}
+	if (i2c_dev->slave_addr == 0) {
+		ret = request_irq(i2c_dev->irq, tegra_i2c_isr, 0, pdev->name, i2c_dev);
+		dev_warn(i2c_dev->dev, "i2c_dev->slave_addr = 0x%x\n", i2c_dev->slave_addr);
 
+		if (ret) {
+			dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
+			goto err_free;
+		}
+	}
 
 	for (i = 0; i < nbus; i++) {
 		struct tegra_i2c_bus *i2c_bus = &i2c_dev->busses[i];

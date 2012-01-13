@@ -205,6 +205,8 @@ obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-gpu.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-i2c.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-keyboard.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-memory.o
+#obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-nvec.o
+obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-nvec2.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-pinmux.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-power.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-sdhci.o
@@ -217,5 +219,3 @@ obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wake.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wdt.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-wlan.o
 obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse.o
-# betelgeuse power management drivers
-obj-${CONFIG_MACH_BETELGEUSE}              += board-betelgeuse-pm-camera.o
