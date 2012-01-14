@@ -117,6 +117,7 @@ static struct regulator_consumer_supply tps658621_ldo3_supply[] = { /* 3V3 */
 	REGULATOR_SUPPLY("vmmc", NULL), 
 	REGULATOR_SUPPLY("avdd_lvds", NULL),
 	REGULATOR_SUPPLY("tmon0", NULL),
+	REGULATOR_SUPPLY("vdd_vcore_temp", NULL),
 };
 
 /* OSC voltage rail : AVDD_OSC -> LDO4
