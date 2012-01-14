@@ -107,7 +107,7 @@
 
 // Audio
 #define TEGRA_GPIO_CDC_IRQ	TEGRA_GPIO_PX3
-#define TEGRA_GPIO_SPKR_EN	WM8903_GP2
+#define TEGRA_GPIO_SPKR_EN	WM8903_GP3
 
 /* The switch used to indicate rotation lock */
 //#define SW_ROTATION_LOCK 	(SW_MAX-1)
