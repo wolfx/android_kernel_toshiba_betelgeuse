@@ -53,6 +53,47 @@
 #include "gpio-names.h"
 #include "devices.h"
 
+static struct tegra_audio_platform_data tegra_spdif_pdata = {
+        .dma_on                 = true,  /* use dma by default */
+        .mask                   = TEGRA_AUDIO_ENABLE_TX | TEGRA_AUDIO_ENABLE_RX,
+        .stereo_capture = true,
+};
+
+static struct tegra_audio_platform_data tegra_audio_pdata[] = {
+        /* For I2S1 - Hifi */
+        [0] = { 
+                .i2s_master             = true,         /* CODEC is slave for audio */
+                .dma_on                 = true,         /* use dma by default */
+                .i2s_master_clk = 44100,
+                .i2s_clk_rate   = 11289600,
+                .dap_clk                = "cdev1",
+                .audio_sync_clk = "audio_2x",
+                .mode                   = I2S_BIT_FORMAT_I2S,
+                .fifo_fmt               = I2S_FIFO_PACKED,
+                .bit_size               = I2S_BIT_SIZE_16,
+                .i2s_bus_width  = 32,
+                .mask                   = TEGRA_AUDIO_ENABLE_TX | TEGRA_AUDIO_ENABLE_RX,
+                .stereo_capture = true,
+        },
+        /* For I2S2 - Bluetooth */
+        [1] = { 
+                .i2s_master             = false,        /* bluetooth is master always */
+                .dma_on                 = true,  /* use dma by default */
+                .i2s_master_clk = 8000,
+                .dsp_master_clk = 8000,
+                .i2s_clk_rate   = 2000000,
+                .dap_clk                = "cdev1",
+                .audio_sync_clk = "audio_2x",
+                .mode                   = I2S_BIT_FORMAT_DSP,
+                .fifo_fmt               = I2S_FIFO_16_LSB,
+                .bit_size               = I2S_BIT_SIZE_16,
+                .i2s_bus_width  = 32,
+                .dsp_bus_width  = 16,
+                .mask                   = TEGRA_AUDIO_ENABLE_TX | TEGRA_AUDIO_ENABLE_RX,
+                .stereo_capture = true,
+        }
+};
+
 static struct wm8903_platform_data wm8903_pdata = {
 	.irq_active_low = 0,
 	.micdet_cfg = 0x00,           /* enable mic bias current */
@@ -85,6 +126,11 @@ static struct tegra_wm8903_platform_data betelgeuse_audio_pdata = {
 	.gpio_ext_mic_en        = -1,
 };
 
+static struct platform_device tegra_generic_codec = {
+	.name = "tegra-generic-codec",
+	.id   = -1,
+};
+
 static struct platform_device betelgeuse_audio_device = {
 	.name   = "tegra-snd-wm8903",
 	.id     = 0,
@@ -95,19 +141,29 @@ static struct platform_device betelgeuse_audio_device = {
 
 static struct platform_device *betelgeuse_audio_devices[] __initdata = {
 	&tegra_i2s_device1,
+	&tegra_i2s_device2,
 	&tegra_spdif_device,
 	&tegra_das_device,
 	&spdif_dit_device,
 	&tegra_pcm_device,
+	&tegra_generic_codec,
 	&betelgeuse_audio_device,
 };
 
 int __init betelgeuse_audio_register_devices(void)
 {
+	int ret;
+
 	pr_info("Audio: betelgeuse_audio_init\n");
-	platform_add_devices(betelgeuse_audio_devices, ARRAY_SIZE(betelgeuse_audio_devices));
-	i2c_register_board_info(0, wm8903_board_info, 1);
-	return 0;
+
+	/* Patch in the platform data */
+	tegra_i2s_device1.dev.platform_data = &tegra_audio_pdata[0];
+	tegra_i2s_device2.dev.platform_data = &tegra_audio_pdata[1];
+	tegra_spdif_device.dev.platform_data = &tegra_spdif_pdata;
+
+	ret = i2c_register_board_info(0, wm8903_board_info, 1);
+	if (ret)
+		return ret;
+
+	return platform_add_devices(betelgeuse_audio_devices, ARRAY_SIZE(betelgeuse_audio_devices));
 }
-
-
