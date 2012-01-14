@@ -166,8 +166,8 @@ static int betelgeuse_hdmi_disable(void)
 
 /* If using 1024x600 panel (Shuttle default panel) */
 
-/* Frame buffer size assuming 16bpp color */
-#define BETELGEUSE_FB_SIZE TEGRA_ROUND_ALLOC(1024*600*(16/8)*BETELGEUSE_FB_PAGES)
+/* Frame buffer size assuming 32bpp color */
+#define BETELGEUSE_FB_SIZE TEGRA_ROUND_ALLOC(1024*600*(32/8)*BETELGEUSE_FB_PAGES)
 
 static struct tegra_dc_mode betelgeuse_panel_modes[] = {
 	{
@@ -189,30 +189,30 @@ static struct tegra_fb_data betelgeuse_fb_data = {
 	.win		= 0,
 	.xres		= 1024,
 	.yres		= 600,
-	.bits_per_pixel	= 16,
+	.bits_per_pixel	= 32,
 };
 
 #if defined(BETELGEUSE_1920x1080HDMI)
 
-/* Frame buffer size assuming 16bpp color and 2 pages for page flipping */
-#define BETELGEUSE_FB_HDMI_SIZE TEGRA_ROUND_ALLOC(1920*1080*(16/8)*2)
+/* Frame buffer size assuming 32bpp color and 2 pages for page flipping */
+#define BETELGEUSE_FB_HDMI_SIZE TEGRA_ROUND_ALLOC(1920*1080*(32/8)*BETELGEUSE_FB_HDMI_PAGES)
 
 static struct tegra_fb_data betelgeuse_hdmi_fb_data = {
 	.win		= 0,
 	.xres		= 1920,
 	.yres		= 1080,
-	.bits_per_pixel	= 16,
+	.bits_per_pixel	= 32,
 };
 
 #else
 
-#define BETELGEUSE_FB_HDMI_SIZE TEGRA_ROUND_ALLOC(1280*720*(16/8)*2)
+#define BETELGEUSE_FB_HDMI_SIZE TEGRA_ROUND_ALLOC(1280*720*(32/8)*BETELGEUSE_FB_HDMI_PAGES)
 
 static struct tegra_fb_data betelgeuse_hdmi_fb_data = {
 	.win		= 0,
 	.xres		= 1280,
 	.yres		= 720,
-	.bits_per_pixel	= 16,
+	.bits_per_pixel	= 32,
 };
 #endif
 
