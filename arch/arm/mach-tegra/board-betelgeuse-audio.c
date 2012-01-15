@@ -100,8 +100,8 @@ static struct wm8903_platform_data wm8903_pdata = {
 	.micdet_delay = 100,
 	.gpio_base = WM8903_GPIO_BASE,
 	.gpio_cfg = {
-		WM8903_GPIO_NO_CONFIG,
-		WM8903_GPIO_NO_CONFIG,
+		(WM8903_GPn_FN_DMIC_LR_CLK_OUTPUT << WM8903_GP1_FN_SHIFT),
+		(WM8903_GPn_FN_DMIC_LR_CLK_OUTPUT << WM8903_GP2_FN_SHIFT) | WM8903_GP2_DIR,
 		//(0x06<<WM8903_GP1_FN_SHIFT) | WM8903_GP1_LVL | WM8903_GP1_DB,
 		//(0x06<<WM8903_GP1_FN_SHIFT) | WM8903_GP1_DIR | WM8903_GP1_IP_CFG,
 		0,                     /* as output pin */
