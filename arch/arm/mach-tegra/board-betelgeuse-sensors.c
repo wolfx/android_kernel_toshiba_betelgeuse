@@ -75,7 +75,7 @@ static struct adt7461_platform_data betelgeuse_adt7461_pdata = {
 
 
 static struct i2c_board_info __initdata adt7461_device = {
-	I2C_BOARD_INFO("adt7461", 0x4C),
+	I2C_BOARD_INFO("adt7461", 0x4c),
 	.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TEMP_ALERT),
 	.platform_data = &betelgeuse_adt7461_pdata,
 };
