@@ -85,8 +85,8 @@
 #define BETELGEUSE_NVEC_REQ	TEGRA_GPIO_PBB1	/* Set to 0 to send a command to the NVidia Embedded controller */
 #define BETELGEUSE_NVEC_I2C_ADDR 0x8a 			/* I2C address of Tegra, when acting as I2C slave */
 
-#define BETELGEUSE_WAKE_KEY_POWER  TEGRA_WAKE_GPIO_PV2
-#define BETELGEUSE_WAKE_KEY_RESUME TEGRA_WAKE_GPIO_PV2
+//#define TEGRA_GPIO_POWERKEY	 	TEGRA_GPIO_PJ7
+#define TEGRA_GPIO_POWERKEY	 	TEGRA_GPIO_PA0
 
 // USB
 #define BETELGEUSE_USB1_RESET	TEGRA_GPIO_PV0

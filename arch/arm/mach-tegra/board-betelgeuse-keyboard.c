@@ -20,13 +20,16 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/input.h>
+#include <linux/gpio_keys.h>
 #include <mach/io.h>
 #include <mach/iomap.h>
 #include <mach/kbc.h>
+#include <mach/gpio.h>
 
 #include "board.h"
 #include "board-betelgeuse.h"
 #include "devices.h"
+#include "gpio-names.h"
 
 #define BETELGEUSE_ROW_COUNT	1
 #define BETELGEUSE_COL_COUNT	7
@@ -67,6 +70,30 @@ static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
 	.wake_cfg = &betelgeuse_wake_cfg[0],
 };
 
+static struct gpio_keys_button betelgeuse_gpio_keys_buttons[] = {
+	{
+		.code           = KEY_POWER,
+		.gpio           = TEGRA_GPIO_POWERKEY,
+		.active_low     = 1,
+		.desc           = "Power",
+		.type           = EV_KEY,
+		.wakeup         = 1,
+	},
+};
+
+static struct gpio_keys_platform_data betelgeuse_gpio_keys = {
+	.buttons        = betelgeuse_gpio_keys_buttons,
+	.nbuttons       = ARRAY_SIZE(betelgeuse_gpio_keys_buttons),
+};
+
+static struct platform_device betelgeuse_gpio_keys_device = {
+	.name   = "gpio-keys",
+	.id     = -1,
+	.dev    = {
+		.platform_data = &betelgeuse_gpio_keys,
+	},
+};
+
 int __init betelgeuse_keyboard_register_devices(void)
 {
 	struct tegra_kbc_platform_data *data = &betelgeuse_kbc_platform_data;
@@ -84,6 +111,7 @@ int __init betelgeuse_keyboard_register_devices(void)
 		data->pin_cfg[i + KBC_MAX_ROW].num = i;
 
 	platform_device_register(&tegra_kbc_device);
+	//platform_device_register(&betelgeuse_gpio_keys_device);
 	pr_info("Registering successful tegra-kbc\n");
 	return 0;
 }
