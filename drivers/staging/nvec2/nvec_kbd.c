@@ -77,6 +77,22 @@ static int nvec_keys_notifier(struct notifier_block *nb,
 	
 	if (ev->size == 1) {
 		dev_dbg(keys->dev,"EC Payload = 0x%02x\n", ev->data[0]);
+		switch (ev->data[0]) {
+		case 0x3e:
+			pressed = 1;
+			code = KEY_POWER;
+			dev_dbg(keys->dev,"reporting key %s for key %d\n", pressed ? "press" : "release", code);
+			input_report_key(keys->input, code, pressed);
+			input_sync(keys->input);
+			return NOTIFY_STOP;
+		case 0xbe:
+			pressed = 0;
+			code = KEY_POWER;
+			dev_dbg(keys->dev,"reporting key %s for key %d\n", pressed ? "press" : "release", code);
+			input_report_key(keys->input, code, pressed);
+			input_sync(keys->input);
+			return NOTIFY_STOP;
+		}
 	} else {
 		for (i = 0; i < ev->size; i++) {
 			dev_dbg(keys->dev,"EC Payload = 0x%02x\n", ev->data[i]);
