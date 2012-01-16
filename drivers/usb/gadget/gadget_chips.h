@@ -45,6 +45,12 @@
 #define	gadget_is_goku(g)	0
 #endif
 
+#ifdef CONFIG_USB_GADGET_LH7A40X
+#define	gadget_is_lh7a40x(g)	!strcmp("lh7a40x_udc", (g)->name)
+#else
+#define	gadget_is_lh7a40x(g)	0
+#endif
+
 #ifdef CONFIG_USB_GADGET_OMAP
 #define	gadget_is_omap(g)	!strcmp("omap_udc", (g)->name)
 #else
@@ -136,17 +142,6 @@
 #define gadget_is_s3c_hsotg(g)    0
 #endif
 
-#ifdef CONFIG_USB_GADGET_EG20T
-#define	gadget_is_pch(g)	(!strcmp("pch_udc", (g)->name))
-#else
-#define	gadget_is_pch(g)	0
-#endif
-
-#ifdef CONFIG_USB_GADGET_CI13XXX_MSM
-#define gadget_is_ci13xxx_msm(g)	(!strcmp("ci13xxx_msm", (g)->name))
-#else
-#define gadget_is_ci13xxx_msm(g)	0
-#endif
 
 /**
  * usb_gadget_controller_number - support bcdDevice id convention
@@ -175,6 +170,8 @@ static inline int usb_gadget_controller_number(struct usb_gadget *gadget)
 		return 0x06;
 	else if (gadget_is_omap(gadget))
 		return 0x08;
+	else if (gadget_is_lh7a40x(gadget))
+		return 0x09;
 	else if (gadget_is_pxa27x(gadget))
 		return 0x11;
 	else if (gadget_is_s3c2410(gadget))
@@ -203,10 +200,6 @@ static inline int usb_gadget_controller_number(struct usb_gadget *gadget)
 		return 0x25;
 	else if (gadget_is_s3c_hsotg(gadget))
 		return 0x26;
-	else if (gadget_is_pch(gadget))
-		return 0x27;
-	else if (gadget_is_ci13xxx_msm(gadget))
-		return 0x28;
 	return -ENOENT;
 }
 
@@ -229,4 +222,14 @@ static inline bool gadget_supports_altsettings(struct usb_gadget *gadget)
 	return true;
 }
 
+/**
+ * gadget_dma32 - return true if we want buffer aligned on 32 bits (for dma)
+ * @gadget: the gadget in question
+ */
+static inline bool gadget_dma32(struct usb_gadget *gadget)
+{
+	if (gadget_is_musbhdrc(gadget))
+		return true;
+	return false;
+}
 #endif /* __GADGET_CHIPS_H */

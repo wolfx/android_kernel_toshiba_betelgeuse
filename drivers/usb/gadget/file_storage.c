@@ -109,11 +109,12 @@
  *	vendor=0xVVVV		Default 0x0525 (NetChip), USB Vendor ID
  *	product=0xPPPP		Default 0xa4a5 (FSG), USB Product ID
  *	release=0xRRRR		Override the USB release number (bcdDevice)
+ *	serial=HHHH...		Override serial number (string of hex chars)
  *	buflen=N		Default N=16384, buffer size used (will be
  *					rounded down to a multiple of
  *					PAGE_CACHE_SIZE)
  *
- * If CONFIG_USB_FILE_STORAGE_TEST is not set, only the "file", "serial", "ro",
+ * If CONFIG_USB_FILE_STORAGE_TEST is not set, only the "file", "ro",
  * "removable", "luns", "nofua", "stall", and "cdrom" options are available;
  * default values are used for everything else.
  *
@@ -273,10 +274,13 @@
 
 #define DRIVER_DESC		"File-backed Storage Gadget"
 #define DRIVER_NAME		"g_file_storage"
-#define DRIVER_VERSION		"1 September 2010"
+/* DRIVER_VERSION must be at least 6 characters long, as it is used
+ * to generate a fallback serial number. */
+#define DRIVER_VERSION		"20 November 2008"
 
 static       char fsg_string_manufacturer[64];
 static const char fsg_string_product[] = DRIVER_DESC;
+static       char fsg_string_serial[13];
 static const char fsg_string_config[] = "Self-powered";
 static const char fsg_string_interface[] = "Mass Storage";
 
@@ -302,7 +306,6 @@ MODULE_LICENSE("Dual BSD/GPL");
 
 static struct {
 	char		*file[FSG_MAX_LUNS];
-	char		*serial;
 	int		ro[FSG_MAX_LUNS];
 	int		nofua[FSG_MAX_LUNS];
 	unsigned int	num_filenames;
@@ -319,6 +322,7 @@ static struct {
 	unsigned short	vendor;
 	unsigned short	product;
 	unsigned short	release;
+	char		*serial;
 	unsigned int	buflen;
 
 	int		transport_type;
@@ -364,6 +368,9 @@ MODULE_PARM_DESC(stall, "false to prevent bulk stalls");
 
 module_param_named(cdrom, mod_data.cdrom, bool, S_IRUGO);
 MODULE_PARM_DESC(cdrom, "true to emulate cdrom instead of disk");
+
+module_param_named(serial, mod_data.serial, charp, S_IRUGO);
+MODULE_PARM_DESC(serial, "USB serial number");
 
 /* In the non-TEST version, only the module parameters listed above
  * are available. */
@@ -3211,6 +3218,7 @@ static int __init check_parameters(struct fsg_dev *fsg)
 {
 	int	prot;
 	int	gcnum;
+	int	i;
 
 	/* Store the default values */
 	mod_data.transport_type = USB_PR_BULK;
@@ -3306,29 +3314,45 @@ static int __init check_parameters(struct fsg_dev *fsg)
 			if ((*ch < '0' || *ch > '9') &&
 			    (*ch < 'A' || *ch > 'F')) { /* not uppercase hex */
 				WARNING(fsg,
-					"Invalid serial string character: %c\n",
+					"Invalid serial string character: %c; "
+					"Failing back to default\n",
 					*ch);
-				goto no_serial;
+				goto fill_serial;
 			}
 		}
 		if (len > 126 ||
 		    (mod_data.transport_type == USB_PR_BULK && len < 12) ||
 		    (mod_data.transport_type != USB_PR_BULK && len > 12)) {
-			WARNING(fsg, "Invalid serial string length!\n");
-			goto no_serial;
+			WARNING(fsg,
+				"Invalid serial string length; "
+				"Failing back to default\n");
+			goto fill_serial;
 		}
 		fsg_strings[FSG_STRING_SERIAL - 1].s = mod_data.serial;
 	} else {
-		WARNING(fsg, "No serial-number string provided!\n");
- no_serial:
-		device_desc.iSerialNumber = 0;
+		WARNING(fsg,
+			"Userspace failed to provide serial number; "
+			"Failing back to default\n");
+fill_serial:
+		/* Serial number not specified or invalid, make our own.
+		 * We just encode it from the driver version string,
+		 * 12 characters to comply with both CB[I] and BBB spec.
+		 * Warning : Two devices running the same kernel will have
+		 * the same fallback serial number. */
+		for (i = 0; i < 12; i += 2) {
+			unsigned char	c = DRIVER_VERSION[i / 2];
+
+			if (!c)
+				break;
+			sprintf(&fsg_string_serial[i], "%02X", c);
+		}
 	}
 
 	return 0;
 }
 
 
-static int __init fsg_bind(struct usb_gadget *gadget)
+static int __ref fsg_bind(struct usb_gadget *gadget)
 {
 	struct fsg_dev		*fsg = the_fsg;
 	int			rc;
@@ -3396,7 +3420,15 @@ static int __init fsg_bind(struct usb_gadget *gadget)
 		rc = device_register(&curlun->dev);
 		if (rc) {
 			INFO(fsg, "failed to register LUN%d: %d\n", i, rc);
-			put_device(&curlun->dev);
+			goto out;
+		}
+		if ((rc = device_create_file(&curlun->dev,
+					&dev_attr_ro)) != 0 ||
+				(rc = device_create_file(&curlun->dev,
+					&dev_attr_nofua)) != 0 ||
+				(rc = device_create_file(&curlun->dev,
+					&dev_attr_file)) != 0) {
+			device_unregister(&curlun->dev);
 			goto out;
 		}
 		curlun->registered = 1;
@@ -3412,8 +3444,8 @@ static int __init fsg_bind(struct usb_gadget *gadget)
 			goto out;
 
 		if (mod_data.file[i] && *mod_data.file[i]) {
-			rc = fsg_lun_open(curlun, mod_data.file[i]);
-			if (rc)
+			if ((rc = fsg_lun_open(curlun,
+					mod_data.file[i])) != 0)
 				goto out;
 		} else if (!mod_data.removable) {
 			ERROR(fsg, "no file given for LUN%d\n", i);
@@ -3591,6 +3623,7 @@ static struct usb_gadget_driver		fsg_driver = {
 	.speed		= USB_SPEED_FULL,
 #endif
 	.function	= (char *) fsg_string_product,
+	.bind		= fsg_bind,
 	.unbind		= fsg_unbind,
 	.disconnect	= fsg_disconnect,
 	.setup		= fsg_setup,

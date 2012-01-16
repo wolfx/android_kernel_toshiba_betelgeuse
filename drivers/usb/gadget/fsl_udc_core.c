@@ -2208,8 +2208,7 @@ static irqreturn_t fsl_udc_irq(int irq, void *_udc)
  * Hook to gadget drivers
  * Called by initialization code of gadget drivers
 *----------------------------------------------------------------*/
-int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
-		int (*bind)(struct usb_gadget *))
+int usb_gadget_register_driver(struct usb_gadget_driver *driver)
 {
 	int retval = -ENODEV;
 	unsigned long flags = 0;
@@ -2219,7 +2218,8 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
 
 	if (!driver || (driver->speed != USB_SPEED_FULL
 				&& driver->speed != USB_SPEED_HIGH)
-			|| !bind || !driver->disconnect || !driver->setup)
+			|| !driver->bind || !driver->disconnect
+			|| !driver->setup)
 		return -EINVAL;
 
 	if (udc_controller->driver)
@@ -2235,32 +2235,48 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
 	spin_unlock_irqrestore(&udc_controller->lock, flags);
 
 	/* bind udc driver to gadget driver */
-	retval = bind(&udc_controller->gadget);
+	retval = driver->bind(&udc_controller->gadget);
 	if (retval) {
 		VDBG("bind to %s --> %d", driver->driver.name, retval);
 		udc_controller->gadget.dev.driver = NULL;
 		udc_controller->driver = NULL;
 		goto out;
 	}
-
-	/* Enable DR IRQ reg and Set usbcmd reg  Run bit */
-	if (!udc_controller->transceiver) {
-		dr_controller_run(udc_controller);
-		udc_controller->usb_state = USB_STATE_ATTACHED;
-		udc_controller->ep0_state = WAIT_FOR_SETUP;
-		udc_controller->ep0_dir = 0;
-	}
-
 	printk(KERN_INFO "%s: bind to driver %s\n",
 			udc_controller->gadget.name, driver->driver.name);
 
+#if defined(CONFIG_ARCH_TEGRA)
+	if (udc_controller->transceiver) {
+		if (!(fsl_readl(&usb_sys_regs->vbus_wakeup) & USB_SYS_VBUS_STATUS)) {
+			/* If VBUS is not present then power down the clocks */
+			udc_controller->vbus_active = 0;
+			//platform_udc_clk_suspend();
+			/* set the gadget driver and quit (don't run the controller) */
+			otg_set_peripheral(udc_controller->transceiver,
+				&udc_controller->gadget);
+			goto out;
+		} else {
+			/* VBUS detected set the gadget driver and run the controller */
+			otg_set_peripheral(udc_controller->transceiver,
+				&udc_controller->gadget);
+			udc_controller->transceiver->state = OTG_STATE_B_PERIPHERAL;
+			udc_controller->vbus_active = 1;
+		}
+	}
+#endif
+
+	/* Enable DR IRQ reg and Set usbcmd reg  Run bit */
+	dr_controller_run(udc_controller);
+	udc_controller->usb_state = USB_STATE_ATTACHED;
+	udc_controller->ep0_state = WAIT_FOR_SETUP;
+	udc_controller->ep0_dir = 0;
 out:
 	if (retval)
 		printk(KERN_WARNING "gadget driver register failed %d\n",
 		       retval);
 	return retval;
 }
-EXPORT_SYMBOL(usb_gadget_probe_driver);
+EXPORT_SYMBOL(usb_gadget_register_driver);
 
 /* Disconnect from gadget driver */
 int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
