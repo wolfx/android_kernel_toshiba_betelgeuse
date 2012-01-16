@@ -25,6 +25,6 @@ $(KERNEL_CONFIG): $(LOCAL_PATH)/arch/arm/configs/tegra_betelgeuse_android_defcon
 	$(transform-prebuilt-to-target)
 
 $(TARGET_PREBUILT_KERNEL): $(KERNEL_OUT) $(KERNEL_CONFIG)
-	$(MAKE) -C $(KERNEL_SRC) O=../../$(KERNEL_OUT) ARCH=arm CROSS_COMPILE=$(shell pwd)/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi- INSTALL_MOD_STRIP=1
+	$(MAKE) -C $(KERNEL_SRC) O=../../$(KERNEL_OUT) ARCH=arm CROSS_COMPILE=$(shell pwd)/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi- INSTALL_MOD_STRIP=1
 endif
 endif
