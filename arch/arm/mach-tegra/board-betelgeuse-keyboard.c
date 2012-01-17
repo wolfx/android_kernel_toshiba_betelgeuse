@@ -111,7 +111,7 @@ int __init betelgeuse_keyboard_register_devices(void)
 		data->pin_cfg[i + KBC_MAX_ROW].num = i;
 
 	platform_device_register(&tegra_kbc_device);
-	//platform_device_register(&betelgeuse_gpio_keys_device);
+	platform_device_register(&betelgeuse_gpio_keys_device);
 	pr_info("Registering successful tegra-kbc\n");
 	return 0;
 }
