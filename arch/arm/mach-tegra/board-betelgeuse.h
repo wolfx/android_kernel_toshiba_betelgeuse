@@ -80,8 +80,6 @@
 #define BETELGEUSE_LOW_BATT		TEGRA_GPIO_PW3 /*(0=low battery)*/
 #define BETELGEUSE_IN_S3		TEGRA_GPIO_PAA7 /*1 = in S3 */
 
-#define BETELGEUSE_HP_DETECT	TEGRA_GPIO_PW2 	/* HeadPhone detect for audio codec: 1=Hedphone plugged */
-
 #define BETELGEUSE_NVEC_REQ	TEGRA_GPIO_PBB1	/* Set to 0 to send a command to the NVidia Embedded controller */
 #define BETELGEUSE_NVEC_I2C_ADDR 0x8a 			/* I2C address of Tegra, when acting as I2C slave */
 
@@ -108,6 +106,7 @@
 // Audio
 #define TEGRA_GPIO_CDC_IRQ	TEGRA_GPIO_PX3
 #define TEGRA_GPIO_SPKR_EN	WM8903_GP3
+#define BETELGEUSE_HP_DETECT	TEGRA_GPIO_PW2 	/* HeadPhone detect for audio codec: 1=Hedphone plugged */
 
 /* The switch used to indicate rotation lock */
 //#define SW_ROTATION_LOCK 	(SW_MAX-1)
