@@ -99,7 +99,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "bsea",		"clk_m",		12000000,	false},		/* tegra_avp */
 	{ "vcp",		"clk_m",		12000000,	false},		/* tegra_avp */
 	{ "sdmmc3",		"clk_m",		12000000,	false},
-	{ "sdmmc2",		"clk_m",		400000,		true},
 	{ "vfir",		"clk_m",		12000000,		false},
 	{ "ndflash",	"pll_p",		12000000,		false},
 	{ "ide",		"clk_m",		12000000,		false},
@@ -135,6 +134,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "uarta",		"pll_p",		216000000,	false},		/* tegra_uart.0 uart.0 */
 	{ "csite",		"pll_p",		144000000,	true},		/* csite - coresite */ /* always on */
 	{ "sdmmc4",		"pll_p",		48000000,	false},		/* sdhci-tegra.3 */
+	{ "sdmmc2",		"pll_p",		48000000,	false},		/* sdhci-tegra.1 */
 	{ "sdmmc1",		"pll_p",		48000000,	true},		/* sdhci-tegra.0 */
 	{ "spdif_in",		"pll_p",		36000000,	false},
 	{ "pll_p_out4",		"pll_p",		24000000,	true},		/* must be always on - USB ulpi */
