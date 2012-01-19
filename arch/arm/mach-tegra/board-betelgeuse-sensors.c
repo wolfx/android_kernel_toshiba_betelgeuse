@@ -26,6 +26,7 @@
 #include <linux/adt7461.h>
 #include <linux/akm8975.h>
 //#include <linux/i2c/ak8975.h>
+#include <linux/lsm303dlh.h>
 
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
@@ -95,9 +96,35 @@ static void betelgeuse_adt7461_init(void)
 	i2c_register_board_info(4, &adt7461_device, 1);
 }
 
+static struct lsm303dlh_platform_data betelgeuse_lsm303dlh_pdata = {
+	.name_a = "acelerometer",
+	.name_m = "magnetometer",
+	.irq_a1 = TEGRA_GPIO_TO_IRQ(LSM303DHL_IRQ_GPIO),
+	.irq_a1 = -1,
+	.irq_m = -1,
+	.axis_map_x = 0,
+	.axis_map_y = 0,
+	.axis_map_z = 0,
+	.negative_x = 0,
+	.negative_y = 0,
+	.negative_z = 0,
+};
+
+static struct i2c_board_info __initdata lsm303dlh_device = {
+        I2C_BOARD_INFO("lsm303dlh_a", 0x09),
+        .irq = TEGRA_GPIO_TO_IRQ(LSM303DHL_IRQ_GPIO),
+	.platform_data = &betelgeuse_lsm303dlh_pdata,
+};
+
+static void betelgeuse_lsm303dlh_init(void)
+{
+        i2c_register_board_info(0, &lsm303dlh_device, 1);
+}
+
 int __init betelgeuse_sensors_register_devices(void)
 {
 	betelgeuse_akm8975_init();
 	betelgeuse_adt7461_init();
+	betelgeuse_lsm303dlh_init();
 	return 0;
 }
