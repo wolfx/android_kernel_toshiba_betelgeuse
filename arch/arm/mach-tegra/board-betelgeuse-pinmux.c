@@ -212,6 +212,7 @@ static struct tegra_gpio_table gpio_table[] = {
 	{ .gpio = BETELGEUSE_TEMP_ALERT,		.enable = true },
 	{ .gpio = BETELGEUSE_NVEC_REQ,			.enable = true },
 	{ .gpio = TEGRA_GPIO_POWERKEY,			.enable = true },
+	{ .gpio = AKM8975_IRQ_GPIO,			.enable = true },
 };
 
 void __init betelgeuse_pinmux_init(void)
