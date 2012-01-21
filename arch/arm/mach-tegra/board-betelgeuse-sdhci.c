@@ -108,7 +108,6 @@ struct tegra_sdhci_platform_data betelgeuse_wlan_data = {
 	.cd_gpio = -1,
 	.wp_gpio = -1,
 	.power_gpio = -1,
-	.has_no_vreg = 1,
 };
 
 /* Used to set the virtual CD of wifi adapter */
@@ -157,7 +156,6 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform_data2 = {
 	.cd_gpio = BETELGEUSE_SDHC_EXT_CD,
 	.wp_gpio = BETELGEUSE_SDHC_EXT_WP,
 	.power_gpio = BETELGEUSE_SDHC_EXT_POWER,
-	.has_no_vreg = 1,
 };
 
 // Internal SD
@@ -165,7 +163,6 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform_data4 = {
 	.cd_gpio = BETELGEUSE_SDHC_INT_CD,
 	.wp_gpio = BETELGEUSE_SDHC_INT_WP,
 	.power_gpio = BETELGEUSE_SDHC_INT_POWER,
-	.has_no_vreg = 1,
 };
 
 
