@@ -102,11 +102,11 @@ static struct lsm303dlh_platform_data betelgeuse_lsm303dlh_pdata = {
 	.irq_a1 = TEGRA_GPIO_TO_IRQ(LSM303DHL_IRQ_GPIO),
 	.irq_a1 = -1,
 	.irq_m = -1,
-	.axis_map_x = 0,
+	.axis_map_x = 1,
 	.axis_map_y = 0,
-	.axis_map_z = 0,
+	.axis_map_z = 2,
 	.negative_x = 0,
-	.negative_y = 0,
+	.negative_y = 1,
 	.negative_z = 0,
 };
 
