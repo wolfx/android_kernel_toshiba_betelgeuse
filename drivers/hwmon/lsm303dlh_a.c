@@ -274,9 +274,9 @@ static int lsm303dlh_a_readdata(struct lsm303dlh_a_data *ddata)
 	data[2] >>= ddata->shift_adjust;
 
 	/* taking position and orientation of x,y,z axis into account*/
-	if (ddata->pdata.axis_map_x == 
-	    ddata->pdata.axis_map_y == 
-	    ddata->pdata.axis_map_z == 0) {
+	if ((ddata->pdata.axis_map_x == 0) &&
+	    (ddata->pdata.axis_map_y == 0) &&
+	    (ddata->pdata.axis_map_z == 0)) {
 		ddata->data.x = data[0];
 		ddata->data.y = data[1];
 		ddata->data.z = data[2];
