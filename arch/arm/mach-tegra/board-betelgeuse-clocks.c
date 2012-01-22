@@ -148,10 +148,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "spdif_out",	"pll_a_out0",	5644800,	false},
 	{ "i2s2",		"pll_a_out0",	470400,		false},		/* i2s.1 */
 	{ "i2s1",		"pll_a_out0",	2822400,	true},		/* i2s.0 */
-	{ "pll_c",		"clk_m",		600000000,	true},		/* always on - graphics and camera clocks */
-	{ "epp",		"pll_c",		300000000,	false},		/* tegra_grhost */
 	{ "vde",		"pll_p",		240000000,	true},		/* tegra-avp */
-	{ "pll_c_out1",	"pll_c",		150000000,	true},		/* must be always on - system clock */
 	{ "pll_m",		"clk_m",		666000000,	true},		/* always on - memory clocks */
 	{ "mpe",		"pll_m",		111000000,	false},		/* tegra_grhost */
 	{ "pll_m_out1",	"pll_m",		222000000,	true},		/* always on - unused ?*/
