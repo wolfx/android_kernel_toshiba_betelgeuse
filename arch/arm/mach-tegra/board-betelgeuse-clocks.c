@@ -155,17 +155,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_m",		"clk_m",		666000000,	true},		/* always on - memory clocks */
 	{ "mpe",		"pll_m",		111000000,	false},		/* tegra_grhost */
 	{ "pll_m_out1",	"pll_m",		222000000,	true},		/* always on - unused ?*/
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
-#       define CDEV1 "cdev1"
-#       define CDEV2 "cdev2"
-#else
-#       define CDEV1 "clk_dev1"
-#       define CDEV2 "clk_dev2"
-#endif
-
-	{ CDEV1,		NULL,			0,		false},		/* used as audio CODEC MCLK */	
-	{ CDEV2,		NULL,			0,		false}, 	/* probably used as USB clock - perhaps 24mhz ?*/	
 	{ NULL,			NULL,			0,		0},
 };
 
