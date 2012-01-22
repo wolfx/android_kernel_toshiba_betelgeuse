@@ -70,16 +70,12 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "bsev",		"clk_m",		12000000,	true},		/* tegra_aes */
 	{ "bsea",		"clk_m",		12000000,	false},		/* tegra_avp */
 	{ "vcp",		"clk_m",		12000000,	false},		/* tegra_avp */
-	{ "pwm",		"clk_m",		12000000,		true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
 	{ "timer",		"clk_m",		12000000,		true},		/* timer */ /* always on - no init req */
 	{ "clk_d",		"clk_m",		24000000,		true},
-	// Use default for now
-	//{ "pll_e",		"clk_m",		1200000000,		false},
 	{ "pll_x",		"clk_m",		1000000000,		true}, // check here
 	{ "pll_u",		"clk_m",		480000000,		true},		/* USB ulpi clock */
 	{ "pll_d",		"clk_m",		1000000,		true},		/* hdmi clock */
 	{ "pll_p",		"clk_m",		216000000,	true},		/* must be always on */
-	{ "host1x",		"pll_p",		108000000,	false},		/* tegra_grhost */
 	{ "sdmmc4",		"pll_p",		48000000,	false},		/* sdhci-tegra.3 */
 	{ "sdmmc2",		"pll_p",		48000000,	false},		/* sdhci-tegra.1 */
 	{ "sdmmc1",		"pll_p",		48000000,	true},		/* sdhci-tegra.0 */
