@@ -25,7 +25,6 @@
 #include <linux/mtd/partitions.h>
 #include <linux/dma-mapping.h>
 #include <linux/fsl_devices.h>
-#include <linux/platform_data/tegra_usb.h>
 #include <linux/pda_power.h>
 #include <linux/gpio.h>
 #include <linux/delay.h>
@@ -46,7 +45,6 @@
 #include <mach/sdhci.h>
 #include <mach/gpio.h>
 #include <mach/clk.h>
-#include <mach/usb_phy.h>
 //#include <mach/tegra2_i2s.h>
 #include <mach/system.h>
 #include <mach/nvmap.h>
@@ -56,9 +54,6 @@
 #else
 #include "pm.h"
 #endif
-
-#include <linux/usb/android_composite.h>
-#include <linux/usb/f_accessory.h>
 
 #include "board.h"
 #include "board-betelgeuse.h"
