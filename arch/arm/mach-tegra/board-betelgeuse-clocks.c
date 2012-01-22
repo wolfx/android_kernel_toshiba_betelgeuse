@@ -67,40 +67,10 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_s",		"clk_32k",			32768,		true},		/* must be always on */
 	/* Master clock */
 	{ "clk_m",		NULL,					0,		true},	 	/* must be always on - Frequency will be autodetected */
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
-	{ "pcie_xclk",	"clk_m",		12000000,		false},		/* pcie controller */
-	{ "afi",		"clk_m",		12000000,		false},		/* pcie controller */
-	{ "pex",		"clk_m",		12000000,		false},		/* pcie controller */
-#endif
-	{ "csus",		"clk_m",		12000000,		false},		/* tegra_camera */
-	{ "isp",		"clk_m",		12000000,		false},		/* tegra_camera */
-	{ "usb3",		"clk_m",		12000000,		true},		/* tegra_ehci.2 */
-	{ "usb2",		"clk_m",		12000000,		true},		/* tegra_ehci.1 */
-	{ "usbd",		"clk_m",		12000000,		true},		/* fsl-tegra-udc , utmip-pad , tegra_ehci.0 , tegra_otg */
-	{ "tvdac",		"clk_m",		12000000,		false},
-	{ "hdmi",		"clk_m",		12000000,		false},		/* tegra_dc.0, tegra_dc.1 */
-	{ "tvo",		"clk_m",		12000000,		false},
-	{ "cve",		"clk_m",		12000000,		false},
-	{ "mipi",		"clk_m",		12000000,	false},
-	{ "nor",		"clk_m",		12000000,	false},
-	{ "owr",		"clk_m",		12000000,	false},		/* tegra_w1 */
-	{ "la",			"clk_m",		12000000,	false},
 	{ "bsev",		"clk_m",		12000000,	true},		/* tegra_aes */
 	{ "bsea",		"clk_m",		12000000,	false},		/* tegra_avp */
 	{ "vcp",		"clk_m",		12000000,	false},		/* tegra_avp */
-	{ "sdmmc3",		"clk_m",		12000000,	false},
-	{ "vfir",		"clk_m",		12000000,		false},
-	{ "ndflash",	"pll_p",		12000000,		false},
-	{ "ide",		"clk_m",		12000000,		false},
-	{ "sbc4",		"clk_m",		12000000,		false}, 	/* tegra_spi_slave.3 */
-	{ "sbc3",		"clk_m",		12000000,		false}, 	/* tegra_spi_slave.2 */
-	{ "sbc2",		"clk_m",		12000000,		false}, 	/* tegra_spi_slave.1 */
-	{ "sbc1",		"clk_m",		12000000,		false}, 	/* tegra_spi_slave.0 */
-	{ "twc",		"clk_m",		12000000,		false},
-	{ "xio",		"clk_m",		12000000,		false},
-	{ "spi",		"clk_m",		12000000,		false},
 	{ "pwm",		"clk_m",		12000000,		true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
-	{ "kfuse",		"clk_m",		12000000,		false},		/* kfuse-tegra */ /* always on - no init req */
 	{ "timer",		"clk_m",		12000000,		true},		/* timer */ /* always on - no init req */
 	{ "clk_d",		"clk_m",		24000000,		true},
 	// Use default for now
