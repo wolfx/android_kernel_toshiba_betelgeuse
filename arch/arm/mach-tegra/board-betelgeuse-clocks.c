@@ -76,8 +76,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	// Use default for now
 	//{ "pll_e",		"clk_m",		1200000000,		false},
 	{ "pll_x",		"clk_m",		1000000000,		true}, // check here
-	{ "cclk",		"pll_x",		1000000000,		true},
-	{ "cpu",		"cclk",			1000000000,		true},
 	{ "pll_u",		"clk_m",		480000000,		true},		/* USB ulpi clock */
 	{ "pll_d",		"clk_m",		1000000,		true},		/* hdmi clock */
 	{ "pll_p",		"clk_m",		216000000,	true},		/* must be always on */
