@@ -81,14 +81,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "hdmi",		"clk_m",		12000000,		false},		/* tegra_dc.0, tegra_dc.1 */
 	{ "tvo",		"clk_m",		12000000,		false},
 	{ "cve",		"clk_m",		12000000,		false},
-	{ "uarte",		"clk_m",		12000000,		false},		/* tegra_uart.4 uart.4 */
-	{ "uartd",		"clk_m",		12000000,		false},		/* tegra_uart.3 uart.3 */
-	{ "uartc",		"clk_m",		12000000,		false},		/* tegra_uart.2 uart.2 */
-	{ "uartb",		"clk_m",		12000000,		false},		/* tegra_uart.1 uart.1 */
-	{ "dvc",		"clk_m",		800000,		false},		/* tegra-i2c.3 */
-	{ "i2c3",		"clk_m",		800000,		true},		/* tegra-i2c.2 */
-	{ "i2c2",		"clk_m",		400000,		false},		/* tegra-i2c.1 */
-	{ "i2c1",		"clk_m",		3000000,		false},		/* tegra-i2c.0 */
 	{ "mipi",		"clk_m",		12000000,	false},
 	{ "nor",		"clk_m",		12000000,	false},
 	{ "owr",		"clk_m",		12000000,	false},		/* tegra_w1 */
@@ -120,19 +112,12 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_d",		"clk_m",		1000000,		true},		/* hdmi clock */
 	{ "pll_p",		"clk_m",		216000000,	true},		/* must be always on */
 	{ "host1x",		"pll_p",		108000000,	false},		/* tegra_grhost */
-	{ "uarta",		"pll_p",		216000000,	false},		/* tegra_uart.0 uart.0 */
-	{ "csite",		"pll_p",		144000000,	true},		/* csite - coresite */ /* always on */
 	{ "sdmmc4",		"pll_p",		48000000,	false},		/* sdhci-tegra.3 */
 	{ "sdmmc2",		"pll_p",		48000000,	false},		/* sdhci-tegra.1 */
 	{ "sdmmc1",		"pll_p",		48000000,	true},		/* sdhci-tegra.0 */
 	{ "spdif_in",		"pll_p",		36000000,	false},
 	{ "pll_p_out4",		"pll_p",		24000000,	true},		/* must be always on - USB ulpi */
 	{ "pll_p_out3",		"pll_p",		72000000,	true},		/* must be always on - i2c, camera */
-	{ "csi",		"pll_p_out3",		72000000,	false},		/* tegra_camera */
-	{ "dvc_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.3 */
-	{ "i2c3_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.2 */
-	{ "i2c2_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.1 */
-	{ "i2c1_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.0 */
 	{ "pll_p_out2",		"pll_p",		108000000,	true},		/* must be always on */
 	{ "sclk",		"pll_p_out2",		108000000,	true},		/* must be always on */
 	//{ "avp.sclk",		"sclk",			108000000,	false},		/* must be always on */
