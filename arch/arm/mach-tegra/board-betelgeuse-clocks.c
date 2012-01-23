@@ -73,10 +73,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "timer",		"clk_m",		12000000,		true},		/* timer */ /* always on - no init req */
 	{ "pll_u",		"clk_m",		480000000,		true},		/* USB ulpi clock */
 	{ "pll_p",		"clk_m",		216000000,	true},		/* must be always on */
-	{ "sdmmc4",		"pll_p",		48000000,	false},		/* sdhci-tegra.3 */
 	{ "sdmmc2",		"pll_p",		48000000,	false},		/* sdhci-tegra.1 */
-	{ "sdmmc1",		"pll_p",		48000000,	true},		/* sdhci-tegra.0 */
-	{ "spdif_in",		"pll_p",		36000000,	false},
 	{ "pll_p_out4",		"pll_p",		24000000,	true},		/* must be always on - USB ulpi */
 	{ "pll_p_out3",		"pll_p",		72000000,	true},		/* must be always on - i2c, camera */
 	{ "pll_p_out2",		"pll_p",		108000000,	true},		/* must be always on */
