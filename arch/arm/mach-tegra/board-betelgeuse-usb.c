@@ -125,8 +125,17 @@ static struct tegra_otg_platform_data tegra_otg_pdata = {
 	.ehci_pdata = &tegra_ehci_pdata[0],
 };
 
+static void betelgeuse_usb_hub_ovcur_config(void)
+{
+	tegra_gpio_enable(TEGRA_GPIO_PU3);
+	gpio_request(TEGRA_GPIO_PU3, "usb_hub_ovcur");
+	gpio_direction_input(TEGRA_GPIO_PU3);
+}
+
 static void betelgeuse_usb_init(void)
 {
+	betelgeuse_usb_hub_ovcur_config();
+
 	tegra_usb_phy_init(tegra_usb_phy_pdata, ARRAY_SIZE(tegra_usb_phy_pdata));
 	/* OTG should be the first to be registered */
 	tegra_otg_device.dev.platform_data = &tegra_otg_pdata;
