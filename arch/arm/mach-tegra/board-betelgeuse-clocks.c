@@ -86,6 +86,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "hclk",		"sclk",			108000000,	true},		/* must be always on */
 	{ "pclk",		"hclk",			54000000,	true},		/* must be always on */
 	{ "pll_m",		"clk_m",		666000000,	true},		/* always on - memory clocks */
+	{ "mpe",		"pll_m",		111000000,	false},		/* tegra_grhost */
 	{ "pwm",		"clk_m",		12000000,	true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
 	{ "dvc",		"clk_m",		800000,		true},		/* tegra-i2c.3 */
 	{ "i2c3",		"clk_m",		800000,		true},		/* tegra-i2c.2 */
