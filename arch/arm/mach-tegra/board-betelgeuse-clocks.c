@@ -60,6 +60,7 @@
 static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	/* name			parent				rate	enabled */
 	/* 32khz system clock */
+	{ "pll_m",		NULL,			0,		false},
 	{ "clk_32k",		NULL,			32768,		true},		/* always on */
 	{ "rtc",		"clk_32k",			32768,		true},		/* rtc-tegra : must be always on */
 	{ "kbc",		"clk_32k",			32768,		true},		/* tegra-kbc */
@@ -81,8 +82,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "cop",		"sclk",			108000000,	false},		/* must be always on */
 	{ "hclk",		"sclk",			108000000,	true},		/* must be always on */
 	{ "pclk",		"hclk",			54000000,	true},		/* must be always on */
-	{ "pll_m",		"clk_m",		666000000,	true},		/* always on - memory clocks */
-	{ "mpe",		"pll_m",		111000000,	false},		/* tegra_grhost */
 	{ "pwm",		"clk_m",		12000000,	true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
 	{ NULL,			NULL,			0,		0},
 };
