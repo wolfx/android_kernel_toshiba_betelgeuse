@@ -75,7 +75,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_p",		"clk_m",		216000000,	true},		/* must be always on */
 	{ "sdmmc2",		"pll_p",		48000000,	false},		/* sdhci-tegra.1 */
 	{ "pll_p_out4",		"pll_p",		24000000,	true},		/* must be always on - USB ulpi */
-	{ "pll_p_out3",		"pll_p",		72000000,	true},		/* must be always on - i2c, camera */
 	{ "pll_p_out2",		"pll_p",		108000000,	true},		/* must be always on */
 	{ "sclk",		"pll_p_out2",		108000000,	true},		/* must be always on */
 	{ "avp.sclk",		NULL,			108000000,	false},         /* must be always on */
@@ -85,14 +84,6 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "pll_m",		"clk_m",		666000000,	true},		/* always on - memory clocks */
 	{ "mpe",		"pll_m",		111000000,	false},		/* tegra_grhost */
 	{ "pwm",		"clk_m",		12000000,	true},		/* tegra-pwm.0 tegra-pwm.1 tegra-pwm.2 tegra-pwm.3*/
-	{ "dvc",		"clk_m",		800000,		true},		/* tegra-i2c.3 */
-	{ "i2c3",		"clk_m",		800000,		true},		/* tegra-i2c.2 */
-	{ "i2c2",		"clk_m",		400000,		true},		/* tegra-i2c.1 */
-	{ "i2c1",		"clk_m",		3000000,	true},		/* tegra-i2c.0 */
-	{ "dvc_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.3 */
-	{ "i2c3_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.2 */
-	{ "i2c2_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.1 */
-	{ "i2c1_i2c",		"pll_p_out3",		72000000,	true},		/* tegra-i2c.0 */
 	{ NULL,			NULL,			0,		0},
 };
 
