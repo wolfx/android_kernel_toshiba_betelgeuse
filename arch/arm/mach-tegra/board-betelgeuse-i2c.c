@@ -49,8 +49,8 @@ static struct tegra_i2c_platform_data betelgeuse_i2c2_platform_data = {
 	.adapter_nr     = 1,
 	.bus_count      = 1,
 	.bus_clk_rate   = { 100000, 0 },
-	.scl_gpio	= {0, TEGRA_GPIO_PT5},
-	.sda_gpio	= {0, TEGRA_GPIO_PT6},
+	.scl_gpio	= {TEGRA_GPIO_PT5, 0},
+	.sda_gpio	= {TEGRA_GPIO_PT6, 0},
 	.arb_recovery	= arb_lost_recovery,
 };
 
