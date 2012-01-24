@@ -126,11 +126,6 @@ static struct tegra_wm8903_platform_data betelgeuse_audio_pdata = {
 	.gpio_ext_mic_en        = -1,
 };
 
-static struct platform_device tegra_generic_codec = {
-	.name = "tegra-generic-codec",
-	.id   = -1,
-};
-
 static struct platform_device betelgeuse_audio_device = {
 	.name   = "tegra-snd-wm8903",
 	.id     = 0,
@@ -146,7 +141,6 @@ static struct platform_device *betelgeuse_audio_devices[] __initdata = {
 	&tegra_das_device,
 	&spdif_dit_device,
 	&tegra_pcm_device,
-	&tegra_generic_codec,
 	&betelgeuse_audio_device,
 };
 
@@ -157,9 +151,9 @@ int __init betelgeuse_audio_register_devices(void)
 	pr_info("Audio: betelgeuse_audio_init\n");
 
 	/* Patch in the platform data */
-	tegra_i2s_device1.dev.platform_data = &tegra_audio_pdata[0];
-	tegra_i2s_device2.dev.platform_data = &tegra_audio_pdata[1];
-	tegra_spdif_device.dev.platform_data = &tegra_spdif_pdata;
+	//tegra_i2s_device1.dev.platform_data = &tegra_audio_pdata[0];
+	//tegra_i2s_device2.dev.platform_data = &tegra_audio_pdata[1];
+	//tegra_spdif_device.dev.platform_data = &tegra_spdif_pdata;
 
 	ret = i2c_register_board_info(0, wm8903_board_info, 1);
 	if (ret)
