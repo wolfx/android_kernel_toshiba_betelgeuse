@@ -105,10 +105,13 @@ int __init betelgeuse_keyboard_register_devices(void)
 	for (i = 0; i < KBC_MAX_ROW; i++) {
 		data->pin_cfg[i].num = i;
 		data->pin_cfg[i].is_row = true;
+		data->pin_cfg[i].en = true;
 	}
 
-	for (i = 0; i < KBC_MAX_COL; i++)
+	for (i = 0; i < KBC_MAX_COL; i++) {
 		data->pin_cfg[i + KBC_MAX_ROW].num = i;
+		data->pin_cfg[i + KBC_MAX_ROW].en = true;
+	}
 
 	platform_device_register(&tegra_kbc_device);
 	platform_device_register(&betelgeuse_gpio_keys_device);
