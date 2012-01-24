@@ -148,6 +148,8 @@ static int tegra_fb_set_par(struct fb_info *info)
 
 static int tegra_fb_setcmap(struct fb_cmap *cmap, struct fb_info *info)
 {
+	//TODO: Fix this dirty workaround
+	return 0;
 	struct tegra_fb_info *tegra_fb = info->par;
 	struct tegra_dc *dc = tegra_fb->win->dc;
 	int i;
