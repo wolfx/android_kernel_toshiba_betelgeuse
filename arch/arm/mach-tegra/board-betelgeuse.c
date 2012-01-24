@@ -249,6 +249,7 @@ static void __init tegra_betelgeuse_init(void)
 	   starts.*/
 	betelgeuse_init_emc();
 #endif
+	tegra_release_bootloader_fb();
 	
 }
 
@@ -258,7 +259,15 @@ static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
 	mi->nr_banks = BETELGEUSE_MEM_BANKS;
 	mi->bank[0].start = PHYS_OFFSET;
 	mi->bank[0].size  = BETELGEUSE_MEM_SIZE - BETELGEUSE_GPU_MEM_SIZE;
-} 
+}
+
+int __init tegra_ventana_protected_aperture_init(void)
+{
+	tegra_protected_aperture_init(tegra_grhost_aperture);
+	return 0;
+}
+
+late_initcall(tegra_ventana_protected_aperture_init);
 
 MACHINE_START(LEGACY, "Toshiba Folio 100")
 	.boot_params	= 0x00000100,
