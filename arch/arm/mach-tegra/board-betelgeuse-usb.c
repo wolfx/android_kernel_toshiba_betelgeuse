@@ -56,24 +56,20 @@
 
 static struct tegra_utmip_config utmi_phy_config[] = {
 	[0] = {
-			.hssync_start_delay = 9,
+			.hssync_start_delay = 0,
 			.idle_wait_delay = 17,
 			.elastic_limit = 16,
 			.term_range_adj = 6,
 			.xcvr_setup = 15,
-			.xcvr_setup_offset = 0,
-			.xcvr_use_fuses = 1,
 			.xcvr_lsfslew = 2,
 			.xcvr_lsrslew = 2,
 	},
 	[1] = {
-			.hssync_start_delay = 9,
+			.hssync_start_delay = 0,
 			.idle_wait_delay = 17,
 			.elastic_limit = 16,
 			.term_range_adj = 6,
 			.xcvr_setup = 8,
-			.xcvr_setup_offset = 0,
-			.xcvr_use_fuses = 1,
 			.xcvr_lsfslew = 2,
 			.xcvr_lsrslew = 2,
 	},
@@ -103,7 +99,7 @@ static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
 static struct tegra_ehci_platform_data tegra_ehci_pdata[] = {
 	[0] = {
 			.phy_config = &utmi_phy_config[0],
-			.operating_mode = TEGRA_USB_OTG,
+			.operating_mode = TEGRA_USB_HOST,
 			.power_down_on_bus_suspend = 0,
 	},
 	[1] = {
