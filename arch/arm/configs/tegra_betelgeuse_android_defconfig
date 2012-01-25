@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.39.4 Kernel Configuration
-# Wed Jan 25 00:31:01 2012
+# Wed Jan 25 23:22:47 2012
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y
@@ -2687,7 +2687,7 @@ CONFIG_USB_FSL_USB2=y
 # CONFIG_USB_GADGET_DUMMY_HCD is not set
 CONFIG_USB_GADGET_DUALSPEED=y
 # CONFIG_USB_ZERO is not set
-CONFIG_USB_AUDIO=y
+# CONFIG_USB_AUDIO is not set
 # CONFIG_USB_ETH is not set
 # CONFIG_USB_G_NCM is not set
 # CONFIG_USB_GADGETFS is not set
@@ -2697,7 +2697,7 @@ CONFIG_USB_AUDIO=y
 # CONFIG_USB_G_SERIAL is not set
 # CONFIG_USB_MIDI_GADGET is not set
 # CONFIG_USB_G_PRINTER is not set
-# CONFIG_USB_G_ANDROID is not set
+CONFIG_USB_G_ANDROID=y
 # CONFIG_USB_CDC_COMPOSITE is not set
 # CONFIG_USB_G_MULTI is not set
 # CONFIG_USB_G_HID is not set
