@@ -37,12 +37,12 @@
 #define BETELGEUSE_MEM_SIZE 		SZ_512M			/* Total memory */
 #define BETELGEUSE_MEM_BANKS		1
 
-#define BETELGEUSE_GPU_MEM_SIZE 	SZ_128M			/* Memory reserved for GPU */
+#define BETELGEUSE_GPU_MEM_SIZE 	SZ_256M			/* Memory reserved for GPU */
 
-//#define BETELGEUSE_FB1_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 1: LCD */
-//#define BETELGEUSE_FB2_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 2: HDMI out */
+#define BETELGEUSE_FB1_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 1: LCD */
+#define BETELGEUSE_FB2_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 2: HDMI out */
 
-#define DYNAMIC_GPU_MEM			0			/* use dynamic memory for GPU */
+#define DYNAMIC_GPU_MEM			1			/* use dynamic memory for GPU */
 
 /*#define BETELGEUSE_48KHZ_AUDIO*/ /* <- define this if you want 48khz audio sampling rate instead of 44100Hz */
 

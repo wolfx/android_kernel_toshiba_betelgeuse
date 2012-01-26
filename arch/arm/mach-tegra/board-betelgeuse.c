@@ -253,21 +253,28 @@ static void __init tegra_betelgeuse_init(void)
 	
 }
 
+static void __init tegra_betelgeuse_reserve(void)
+{
+	if (memblock_reserve(0x0, 4096) < 0)
+		pr_warn("Cannot reserve first 4K of memory for safety\n");
+
+#if defined(DYNAMIC_GPU_MEM)
+	/* Reserve the graphics memory */
+	tegra_reserve(BETELGEUSE_GPU_MEM_SIZE, BETELGEUSE_FB1_MEM_SIZE, BETELGEUSE_FB2_MEM_SIZE);
+#endif
+}
+
 static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
 	struct tag *tags, char **cmdline, struct meminfo *mi)
 {
 	mi->nr_banks = BETELGEUSE_MEM_BANKS;
 	mi->bank[0].start = PHYS_OFFSET;
+#if defined(DYNAMIC_GPU_MEM)
+	mi->bank[0].size  = BETELGEUSE_MEM_SIZE;
+#else
 	mi->bank[0].size  = BETELGEUSE_MEM_SIZE - BETELGEUSE_GPU_MEM_SIZE;
+#endif
 }
-
-int __init tegra_ventana_protected_aperture_init(void)
-{
-	tegra_protected_aperture_init(tegra_grhost_aperture);
-	return 0;
-}
-
-late_initcall(tegra_ventana_protected_aperture_init);
 
 MACHINE_START(LEGACY, "Toshiba Folio 100")
 	.boot_params	= 0x00000100,
@@ -276,7 +283,8 @@ MACHINE_START(LEGACY, "Toshiba Folio 100")
 	.init_irq       = tegra_init_irq,
 	.timer          = &tegra_timer,
 	.init_machine	= tegra_betelgeuse_init,
-	.fixup			= tegra_betelgeuse_fixup,
+	.reserve	= tegra_betelgeuse_reserve,
+	.fixup		= tegra_betelgeuse_fixup,
 MACHINE_END
 
 #if 0
