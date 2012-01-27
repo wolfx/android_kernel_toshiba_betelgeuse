@@ -122,7 +122,7 @@ extern void betelgeuse_clks_init(void);
 extern int betelgeuse_usb_register_devices(void);
 extern int betelgeuse_audio_register_devices(void);
 extern int betelgeuse_jack_register_devices(void);
-extern int betelgeuse_gpu_register_devices(void);
+int __init betelgeuse_panel_init(void);
 extern int betelgeuse_uart_register_devices(void);
 extern int betelgeuse_spi_register_devices(void);
 extern int betelgeuse_aes_register_devices(void);

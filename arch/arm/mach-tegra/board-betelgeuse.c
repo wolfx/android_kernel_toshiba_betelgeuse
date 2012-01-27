@@ -176,6 +176,8 @@ static struct platform_device ram_console_device = {
 };
 
 static struct platform_device *betelgeuse_devices[] __initdata = {
+	&tegra_gart_device,
+	&tegra_avp_device,
         &ram_console_device,
 };
 
@@ -212,7 +214,8 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_power_register_devices();
 
 	/* Register GPU devices */
-	betelgeuse_gpu_register_devices();
+//	betelgeuse_gpu_register_devices();
+	betelgeuse_panel_init();
 
 	/* Register NVEC devices */
 	betelgeuse_nvec_register_devices();
