@@ -270,6 +270,9 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_init_emc();
 #endif
 	tegra_release_bootloader_fb();
+#ifdef CONFIG_TEGRA_WDT_RECOVERY
+	tegra_wdt_recovery_init();
+#endif
 	
 }
 
