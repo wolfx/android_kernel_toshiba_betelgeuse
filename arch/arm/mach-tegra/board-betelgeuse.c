@@ -161,6 +161,23 @@ static struct tegra_suspend_platform_data betelgeuse_suspend = {
 	.suspend_mode = TEGRA_SUSPEND_LP0,
 };
 
+static struct resource ram_console_resources[] = {
+	{
+		.flags = IORESOURCE_MEM,
+	},
+};
+
+static struct platform_device ram_console_device = {
+	.name           = "ram_console",
+	.id             = -1,
+	.num_resources  = ARRAY_SIZE(ram_console_resources),
+	.resource       = ram_console_resources,
+};
+
+static struct platform_device *betelgeuse_devices[] __initdata = {
+        &ram_console_device,
+};
+
 static void __init tegra_betelgeuse_init(void)
 {
 	struct clk *clk;
@@ -242,6 +259,9 @@ static void __init tegra_betelgeuse_init(void)
 
 	/* Register Camera powermanagement devices */
 	betelgeuse_camera_register_devices();
+
+	/* Enable the ram console */
+	platform_add_devices(betelgeuse_devices, ARRAY_SIZE(betelgeuse_devices));
 #if 0
 	/* Finally, init the external memory controller and memory frequency scaling
    	   NB: This is not working on BETELGEUSE. And seems there is no point in fixing it,
@@ -253,6 +273,26 @@ static void __init tegra_betelgeuse_init(void)
 	
 }
 
+static void __init betelgeuse_ramconsole_reserve(unsigned long size)
+{
+	struct resource *res;
+	long ret;
+
+	res = platform_get_resource(&ram_console_device, IORESOURCE_MEM, 0);
+	if (!res) {
+		pr_err("Failed to find memory resource for ram console\n");
+		return;
+	}
+	res->start = memblock_end_of_DRAM() - size;
+	res->end = res->start + size - 1;
+	ret = memblock_remove(res->start, size);
+	if (ret) {
+		ram_console_device.resource = NULL;
+		ram_console_device.num_resources = 0;
+		pr_err("Failed to reserve memory block for ram console\n");
+	}
+}
+
 static void __init tegra_betelgeuse_reserve(void)
 {
 	if (memblock_reserve(0x0, 4096) < 0)
@@ -262,6 +302,7 @@ static void __init tegra_betelgeuse_reserve(void)
 	/* Reserve the graphics memory */
 	tegra_reserve(BETELGEUSE_GPU_MEM_SIZE, BETELGEUSE_FB1_MEM_SIZE, BETELGEUSE_FB2_MEM_SIZE);
 #endif
+	betelgeuse_ramconsole_reserve(SZ_1M);
 }
 
 static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
