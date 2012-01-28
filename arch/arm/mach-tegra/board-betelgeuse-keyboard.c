@@ -35,7 +35,7 @@
 #define BETELGEUSE_COL_COUNT	7
 
 static const u32 kbd_keymap[] = {
-	KEY(0, 0, KEY_POWER),
+	KEY(0, 0, KEY_VOLUMEUP),
 	KEY(0, 1, KEY_VOLUMEDOWN),
 	KEY(0, 2, KEY_RESERVED),
 	KEY(0, 3, KEY_RESERVED),
