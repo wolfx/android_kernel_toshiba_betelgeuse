@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.39.4 Kernel Configuration
-# Sat Jan 28 17:25:04 2012
+# Sat Jan 28 23:02:18 2012
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y
@@ -903,7 +903,7 @@ CONFIG_RFKILL_INPUT=y
 #
 # Generic Driver Options
 #
-CONFIG_UEVENT_HELPER_PATH="/system/bin/hotplug"
+CONFIG_UEVENT_HELPER_PATH=""
 # CONFIG_DEVTMPFS is not set
 CONFIG_STANDALONE=y
 CONFIG_PREVENT_FIRMWARE_BUILD=y
