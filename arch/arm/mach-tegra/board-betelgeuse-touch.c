@@ -32,7 +32,7 @@
 
 static struct i2c_board_info __initdata betelgeuse_i2c_bus0_touch_info_egalax[] = {
 	{
-		I2C_BOARD_INFO("egalax_i2c", 0x04),
+		I2C_BOARD_INFO("egalax_ts", 0x04),
 		.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TS_IRQ),
 	},
 };
