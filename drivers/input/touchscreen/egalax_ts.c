@@ -190,7 +190,7 @@ static int __devinit egalax_ts_probe(struct i2c_client *client,
 		goto err_free_dev;
 	}
 
-	input_dev->name = "EETI eGalax Touch Screen";
+	input_dev->name = "egalax_ts";
 	input_dev->id.bustype = BUS_I2C;
 	input_dev->dev.parent = &client->dev;
 
