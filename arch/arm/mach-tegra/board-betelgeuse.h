@@ -31,18 +31,13 @@
 
 #define BETELGEUSE_BL_PWM_ID		0			/* PWM0 controls backlight */
 
-#define BETELGEUSE_FB_PAGES		2			/* At least, 2 video pages */
-#define BETELGEUSE_FB_HDMI_PAGES	2			/* At least, 2 video pages for HDMI */
-
 #define BETELGEUSE_MEM_SIZE 		SZ_512M			/* Total memory */
 #define BETELGEUSE_MEM_BANKS		1
 
 #define BETELGEUSE_GPU_MEM_SIZE 	SZ_160M			/* Memory reserved for GPU */
 
-#define BETELGEUSE_FB1_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 1: LCD */
+#define BETELGEUSE_FB1_MEM_SIZE 	SZ_8M			/* Memory reserved for Framebuffer 1: LCD */
 #define BETELGEUSE_FB2_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 2: HDMI out */
-
-#define DYNAMIC_GPU_MEM			1			/* use dynamic memory for GPU */
 
 /*#define BETELGEUSE_48KHZ_AUDIO*/ /* <- define this if you want 48khz audio sampling rate instead of 44100Hz */
 

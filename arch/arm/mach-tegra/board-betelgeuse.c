@@ -214,7 +214,6 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_power_register_devices();
 
 	/* Register GPU devices */
-//	betelgeuse_gpu_register_devices();
 	betelgeuse_panel_init();
 
 	/* Register NVEC devices */
@@ -305,10 +304,10 @@ static void __init tegra_betelgeuse_reserve(void)
 	if (memblock_reserve(0x0, 4096) < 0)
 		pr_warn("Cannot reserve first 4K of memory for safety\n");
 
-#if defined(DYNAMIC_GPU_MEM)
 	/* Reserve the graphics memory */
 	tegra_reserve(BETELGEUSE_GPU_MEM_SIZE, BETELGEUSE_FB1_MEM_SIZE, BETELGEUSE_FB2_MEM_SIZE);
-#endif
+
+	/* Reserve ram console memory */
 	betelgeuse_ramconsole_reserve(SZ_1M);
 }
 
@@ -317,11 +316,7 @@ static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
 {
 	mi->nr_banks = BETELGEUSE_MEM_BANKS;
 	mi->bank[0].start = PHYS_OFFSET;
-#if defined(DYNAMIC_GPU_MEM)
 	mi->bank[0].size  = BETELGEUSE_MEM_SIZE;
-#else
-	mi->bank[0].size  = BETELGEUSE_MEM_SIZE - BETELGEUSE_GPU_MEM_SIZE;
-#endif
 }
 
 MACHINE_START(LEGACY, "Toshiba Folio 100")
