@@ -36,12 +36,7 @@
 #include "devices.h"
 #include "gpio-names.h"
 #include "board.h"
-
-#define BETELGEUSE_EN_VDD_PANEL		TEGRA_GPIO_PC6
-#define BETELGEUSE_BL_ENB		TEGRA_GPIO_PD4
-#define BETELGEUSE_LVDS_SHUTDOWN	TEGRA_GPIO_PB2
-#define BETELGEUSE_HDMI_HPD	TEGRA_GPIO_PN7
-#define BETELGEUSE_HDMI_ENB	TEGRA_GPIO_PV5
+#include "board-betelgeuse.h"
 
 /*panel power on sequence timing*/
 #define betelgeuse_pnl_to_lvds_ms	0
@@ -83,7 +78,7 @@ static int betelgeuse_backlight_notify(struct device *unused, int brightness)
 static int betelgeuse_disp1_check_fb(struct device *dev, struct fb_info *info);
 
 static struct platform_pwm_backlight_data betelgeuse_backlight_data = {
-	.pwm_id		= 2,
+	.pwm_id		= BETELGEUSE_BL_PWM_ID,
 	.max_brightness	= 255,
 	.dft_brightness	= 224,
 	.pwm_period_ns	= 5000000,
@@ -339,7 +334,7 @@ static struct platform_device *betelgeuse_gfx_devices[] __initdata = {
 #ifdef CONFIG_TEGRA_GRHOST
 	&tegra_grhost_device,
 #endif
-	&tegra_pwfm2_device,
+	&tegra_pwfm0_device,
 	&betelgeuse_backlight_device,
 };
 
@@ -386,6 +381,10 @@ int __init betelgeuse_panel_init(void)
 	gpio_request(BETELGEUSE_EN_VDD_PANEL, "pnl_pwr_enb");
 	gpio_direction_output(BETELGEUSE_EN_VDD_PANEL, 1);
 	tegra_gpio_enable(BETELGEUSE_EN_VDD_PANEL);
+
+	gpio_request(BETELGEUSE_BL_VDD, "bl_vdd");
+	gpio_direction_output(BETELGEUSE_BL_VDD, 1);
+	tegra_gpio_enable(BETELGEUSE_BL_VDD);
 
 	gpio_request(BETELGEUSE_LVDS_SHUTDOWN, "lvds_shdn");
 	gpio_direction_output(BETELGEUSE_LVDS_SHUTDOWN, 1);
