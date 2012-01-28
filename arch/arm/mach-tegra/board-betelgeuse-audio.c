@@ -94,7 +94,7 @@ static struct tegra_audio_platform_data tegra_audio_pdata[] = {
         }
 };
 
-static struct wm8903_platform_data wm8903_pdata = {
+static struct wm8903_platform_data betelgeuse_wm8903_pdata = {
 	.irq_active_low = 0,
 	.micdet_cfg = 0x00,           /* enable mic bias current */
 	.micdet_delay = 100,
@@ -110,12 +110,10 @@ static struct wm8903_platform_data wm8903_pdata = {
 	},
 };
 
-static struct i2c_board_info __initdata wm8903_board_info[] = {
-	{
-		I2C_BOARD_INFO("wm8903", 0x1a),
-		.platform_data = &wm8903_pdata,
-		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
-	},
+static struct i2c_board_info __initdata wm8903_board_info = {
+	I2C_BOARD_INFO("wm8903", 0x1a),
+	.platform_data = &betelgeuse_wm8903_pdata,
+	.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_CDC_IRQ),
 };
 
 static struct tegra_wm8903_platform_data betelgeuse_audio_pdata = {
@@ -140,6 +138,7 @@ static struct platform_device *betelgeuse_audio_devices[] __initdata = {
 	&tegra_spdif_device,
 	&tegra_das_device,
 	&spdif_dit_device,
+	&bluetooth_dit_device,
 	&tegra_pcm_device,
 	&betelgeuse_audio_device,
 };
@@ -155,7 +154,7 @@ int __init betelgeuse_audio_register_devices(void)
 	//tegra_i2s_device2.dev.platform_data = &tegra_audio_pdata[1];
 	//tegra_spdif_device.dev.platform_data = &tegra_spdif_pdata;
 
-	ret = i2c_register_board_info(0, wm8903_board_info, 1);
+	ret = i2c_register_board_info(0, &wm8903_board_info, 1);
 	if (ret)
 		return ret;
 
