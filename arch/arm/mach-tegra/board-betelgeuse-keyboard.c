@@ -32,32 +32,16 @@
 #include "gpio-names.h"
 
 #define BETELGEUSE_ROW_COUNT	1
-#define BETELGEUSE_COL_COUNT	7
+#define BETELGEUSE_COL_COUNT	2
 
 static const u32 kbd_keymap[] = {
 	KEY(0, 0, KEY_VOLUMEUP),
 	KEY(0, 1, KEY_VOLUMEDOWN),
-	KEY(0, 2, KEY_RESERVED),
-	KEY(0, 3, KEY_RESERVED),
-	KEY(0, 4, KEY_RESERVED),
-	KEY(0, 5, KEY_RESERVED),
-	KEY(0, 6, KEY_RESERVED),
 };
 
 static const struct matrix_keymap_data keymap_data = {
 	.keymap		= kbd_keymap,
 	.keymap_size	= ARRAY_SIZE(kbd_keymap),
-};
-
-static struct tegra_kbc_wake_key betelgeuse_wake_cfg[] = {
-	[0] = {
-		.row = 0,
-		.col = 0,
-	},
-	[1] = {
-		.row = 1,
-		.col = 0,
-	}
 };
 
 static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
@@ -66,8 +50,6 @@ static struct tegra_kbc_platform_data betelgeuse_kbc_platform_data = {
 	.wakeup = true,
 	.keymap_data = &keymap_data,
 	.use_fn_map = false,
-	.wake_cnt = 2,
-	.wake_cfg = &betelgeuse_wake_cfg[0],
 };
 
 static struct gpio_keys_button betelgeuse_gpio_keys_buttons[] = {
