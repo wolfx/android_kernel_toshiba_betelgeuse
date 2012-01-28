@@ -83,7 +83,7 @@ static struct tegra_ulpi_config ulpi_phy_config = {
 static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
 	[0] = {
 			.instance = 0,
-			.vbus_irq = TPS6586X_INT_BASE + TPS6586X_INT_USB_DET,
+			//.vbus_irq = TPS6586X_INT_BASE + TPS6586X_INT_USB_DET,
 			.vbus_gpio = BETELGEUSE_USB0_VBUS,
 	},
 	[1] = {
