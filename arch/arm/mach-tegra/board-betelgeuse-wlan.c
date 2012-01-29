@@ -32,32 +32,28 @@
 #include "gpio-names.h"
 #include "board.h"
 #include "board-betelgeuse.h"
+#include "board-betelgeuse-sdhci.h"
 
-static void (*wifi_status_cb)(int card_present, void *dev_id);
-static void *wifi_status_cb_devid;
+static struct clk *wifi_32k_clk;
 
 static int betelgeuse_wifi_reset(int on);
 static int betelgeuse_wifi_power(int on);
 static int betelgeuse_wifi_set_carddetect(int val);
+
+static struct wifi_platform_data betelgeuse_wifi_control = {
+	.set_power	= betelgeuse_wifi_power,
+	.set_reset	= betelgeuse_wifi_reset,
+	.set_carddetect	= betelgeuse_wifi_set_carddetect,
+};
 
 /* This is used for the ath6kl driver - not used for ar6000.ko */
 static struct platform_device betelgeuse_wifi_device = {
 	.name           = "ath6kl",
 	.id             = 1,
 	.dev            = {
+		.platform_data = &betelgeuse_wifi_control,
 	},
 };
-
-int betelgeuse_wifi_status_register(
-		void (*callback)(int card_present, void *dev_id),
-		void *dev_id)
-{
-	if (wifi_status_cb)
-		return -EAGAIN;
-	wifi_status_cb = callback;
-	wifi_status_cb_devid = dev_id;
-	return 0;
-}
 
 static int betelgeuse_wifi_set_carddetect(int val)
 {
@@ -96,25 +92,37 @@ static int betelgeuse_wifi_reset(int on)
 	return 0;
 }
 
-extern int betelgeuse_wlan_register_devices(void)
+static int __init betelgeuse_wifi_init(void)
 {
-	pr_info("%s: WIFI init start\n", __func__);
-	gpio_request(BETELGEUSE_WLAN_POWER, "wlan_power");
-	gpio_request(BETELGEUSE_WLAN_RESET, "wlan_rst");
-
+	wifi_32k_clk = clk_get_sys(NULL, "blink");
+	if (IS_ERR(wifi_32k_clk)) {
+		pr_err("%s: unable to get blink clock\n", __func__);
+		return PTR_ERR(wifi_32k_clk);
+	}
+	
+	gpio_request(BETELGEUSE_WLAN_POWER, "wifi_power");
+	gpio_request(BETELGEUSE_WLAN_RESET, "wifi_reset");
 	gpio_direction_output(BETELGEUSE_WLAN_POWER, 0);
 	gpio_direction_output(BETELGEUSE_WLAN_RESET, 0);
-
-	platform_device_register(&betelgeuse_wifi_device);
+	tegra_gpio_enable(BETELGEUSE_WLAN_POWER);
+	tegra_gpio_enable(BETELGEUSE_WLAN_RESET);
 
 	// Lets just power on wifi
 	betelgeuse_wifi_power(1);
 	betelgeuse_wifi_reset(1);
 	betelgeuse_wifi_set_carddetect(1);
-
+	
+	platform_device_register(&betelgeuse_wifi_device);
+	
 	device_init_wakeup(&betelgeuse_wifi_device.dev, 1);
 	device_set_wakeup_enable(&betelgeuse_wifi_device.dev, 0);
-	pr_info("%s: WIFI init finished\n", __func__);
+	
+	return 0;
+}
 
+extern int betelgeuse_wlan_register_devices(void)
+{
+	pr_info("%s: WIFI init start\n", __func__);
+	betelgeuse_wifi_init();
 	return 0;
 }
