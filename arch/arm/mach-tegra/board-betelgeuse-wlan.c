@@ -70,27 +70,33 @@ static int betelgeuse_wifi_power(int on)
 	pr_info("%s: %d\n", __func__, on);
 
 	gpio_set_value(BETELGEUSE_WLAN_POWER, on);
-	mdelay(100);
 	gpio_set_value(BETELGEUSE_WLAN_RESET, on);
-	mdelay(200);
 
 	return 0;
 }
-
-/* This function is called from ar6000.ko */
-/* For some reason this does not work so we will just enable power */
-static int wlan_setup_power(int on, int detect)
-{
-	pr_info("%s: WIFI Power: on: %i, detect:%i\n", __func__, on, detect);
-	return 0;
-}
-EXPORT_SYMBOL(wlan_setup_power);
 
 static int betelgeuse_wifi_reset(int on)
 {
 	pr_info("%s: do nothing\n", __func__);
 	return 0;
 }
+
+/* This function is called from ar6000.ko */
+void wlan_setup_power(int on, int detect)
+{
+	pr_info("%s: on: %i, detect:%i\n", __func__, on, detect);
+	betelgeuse_wifi_power(on);
+	betelgeuse_wifi_set_carddetect(detect);
+}
+EXPORT_SYMBOL(wlan_setup_power);
+
+/* ar6000.ko stuff */
+static struct platform_device betelgeuse_ar6000_pm_device = {
+	.name		= "wlan_ar6000_pm",
+	.id		= 1,
+	.num_resources	= 0,
+	.resource	= NULL,
+};
 
 static int __init betelgeuse_wifi_init(void)
 {
@@ -113,6 +119,7 @@ static int __init betelgeuse_wifi_init(void)
 	betelgeuse_wifi_set_carddetect(1);
 	
 	platform_device_register(&betelgeuse_wifi_device);
+	platform_device_register(&betelgeuse_ar6000_pm_device);
 	
 	device_init_wakeup(&betelgeuse_wifi_device.dev, 1);
 	device_set_wakeup_enable(&betelgeuse_wifi_device.dev, 0);
