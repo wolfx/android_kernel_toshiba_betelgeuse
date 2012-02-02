@@ -264,7 +264,7 @@ static int __devinit nvec_kbd_probe(struct platform_device *pdev)
 	keys->input = input;
 	input_set_drvdata(input, keys);
 	
-	input->name = "NVEC keyboard";
+	input->name = "nvec_keyboard";
 	input->phys = "NVEC";
 	input->dev.parent = &pdev->dev;
 	input->id.bustype = BUS_HOST;
