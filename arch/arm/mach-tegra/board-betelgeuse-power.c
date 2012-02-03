@@ -392,6 +392,10 @@ static struct tps6586x_subdev_info tps_devs[] = {
 		.name		= "tps6586x-rtc",
 		.platform_data	= &betelgeuse_rtc_data,
 	},
+	{
+		.id		= -1,
+		.name		= "tps6586x-vibrator",
+	},
 };
 
 static struct tps6586x_platform_data tps_platform = {
