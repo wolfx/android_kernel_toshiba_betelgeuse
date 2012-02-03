@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.39.4 Kernel Configuration
-# Sun Jan 29 13:16:24 2012
+# Fri Feb  3 20:36:45 2012
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y
@@ -2703,6 +2703,7 @@ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
 # CONFIG_NFC_DEVICES is not set
 CONFIG_SWITCH=y
 # CONFIG_SWITCH_GPIO is not set
+CONFIG_SWITCH_ANTARES_DOCK=y
 # CONFIG_ACCESSIBILITY is not set
 # CONFIG_INFINIBAND is not set
 CONFIG_RTC_LIB=y
