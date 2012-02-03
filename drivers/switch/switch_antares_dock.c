@@ -31,7 +31,6 @@
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/gpio.h>
-#include "../../kernel/arch/arm/mach-tegra/gpio-names.h"
 #include <linux/antares_dock.h>
 #include <linux/delay.h>
 
