@@ -27,7 +27,7 @@
 #include <linux/delay.h>
 #include <linux/mfd/tps6586x.h>
 
-#include <../../drivers/staging/android/timed_output.h>
+#include "../../drivers/staging/android/timed_output.h"
 
 #define VIBRATOR_REGISTER 0x5b
 #define START_CMD 0x8f
