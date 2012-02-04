@@ -31,6 +31,7 @@
 #include <linux/reboot.h>
 #include <linux/i2c-tegra.h>
 #include <linux/memblock.h>
+#include <linux/antares_dock.h>
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -176,10 +177,24 @@ static struct platform_device ram_console_device = {
 	.resource       = ram_console_resources,
 };
 
+static struct dock_platform_data dock_on_platform_data = {
+	.irq		= TEGRA_GPIO_TO_IRQ(BETELGEUSE_DOCK_GPIO),
+	.gpio_num	= BETELGEUSE_DOCK_GPIO,
+};
+static struct platform_device tegra_dock_device =
+{
+	.name = "tegra_dock",
+	.id   = -1,
+	.dev = {
+		.platform_data = &dock_on_platform_data,
+	},
+};
+
 static struct platform_device *betelgeuse_devices[] __initdata = {
 	&tegra_gart_device,
 	&tegra_avp_device,
         &ram_console_device,
+	&tegra_dock_device,
 };
 
 static void __init tegra_betelgeuse_init(void)

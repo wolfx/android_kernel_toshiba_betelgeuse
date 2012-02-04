@@ -39,6 +39,8 @@
 #define BETELGEUSE_FB1_MEM_SIZE 	SZ_8M			/* Memory reserved for Framebuffer 1: LCD */
 #define BETELGEUSE_FB2_MEM_SIZE 	SZ_16M			/* Memory reserved for Framebuffer 2: HDMI out */
 
+#define BETELGEUSE_DOCK_GPIO		TEGRA_GPIO_PV2
+
 /*#define BETELGEUSE_48KHZ_AUDIO*/ /* <- define this if you want 48khz audio sampling rate instead of 44100Hz */
 
 
