@@ -70,6 +70,7 @@ static int betelgeuse_wifi_power(int on)
 	pr_info("%s: %d\n", __func__, on);
 
 	gpio_set_value(BETELGEUSE_WLAN_POWER, on);
+	mdelay(100);
 	gpio_set_value(BETELGEUSE_WLAN_RESET, on);
 
 	return 0;
@@ -87,6 +88,7 @@ void wlan_setup_power(int on, int detect)
 	pr_info("%s: on: %i, detect:%i\n", __func__, on, detect);
 	betelgeuse_wifi_power(on);
 	betelgeuse_wifi_set_carddetect(detect);
+	mdelay(200);
 }
 EXPORT_SYMBOL(wlan_setup_power);
 
