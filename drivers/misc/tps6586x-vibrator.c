@@ -27,7 +27,7 @@
 #include <linux/delay.h>
 #include <linux/mfd/tps6586x.h>
 
-#include <../../drivers/staging/android/timed_output.h>
+#include "../../drivers/staging/android/timed_output.h"
 
 static int s_timeout;
 
