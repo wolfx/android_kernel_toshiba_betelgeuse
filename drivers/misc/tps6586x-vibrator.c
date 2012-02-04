@@ -29,23 +29,27 @@
 
 #include <../../drivers/staging/android/timed_output.h>
 
+#define VIBRATOR_REGISTER 0x5b
+#define START_CMD 0x8f
+#define STOP_CMD 0x00
+
 static int s_timeout;
 
 struct device *tps_dev ;
 
 static void vibrator_start(void) 
 {
- 	int err = tps6586x_write(tps_dev, 0x5b, 0x8f );
+ 	int err = tps6586x_write(tps_dev, VIBRATOR_REGISTER, START_CMD );
 	if (err < 0) {
-		printk( "failed to program new time\n");
+		printk( "Failed to send start command\n");
 	} 
 }
 
 static void vibrator_stop(void) 
 {
-  	int err = tps6586x_write(tps_dev, 0x5b, 0x00 );
+  	int err = tps6586x_write(tps_dev, VIBRATOR_REGISTER, STOP_CMD );
 	if (err < 0) {
-		printk( "failed to program new time\n");
+		printk( "Failed to send stop command\n");
 	}
 }
 
