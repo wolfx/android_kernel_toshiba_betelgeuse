@@ -55,7 +55,6 @@ static void vibrator_stop(void)
 
 static void vibrator_enable(struct timed_output_dev *dev, int value)
 {
-	int mode;
 	s_timeout = value;
 
 	if (value > 0) {
@@ -85,7 +84,6 @@ static struct timed_output_dev tegra_vibrator = {
 
 static int __devinit tps6586x_vibrator_probe(struct platform_device *pdev)
 {
-	struct tps6586x_vibrator_platform_data *pdata = pdev->dev.platform_data;
 	tps_dev = to_tps6586x_dev(&pdev->dev);
 	
 	// Add init information 
@@ -96,12 +94,10 @@ static int __devinit tps6586x_vibrator_probe(struct platform_device *pdev)
 	dev_set_drvdata(&pdev->dev, &tegra_vibrator );
 	device_init_wakeup(&pdev->dev, 1);
 	
-	int status = timed_output_dev_register(&tegra_vibrator);
-
-	return status;
+	return timed_output_dev_register(&tegra_vibrator);
 }
 
-static int __devexit tps6586x_vibrator_remove(void)
+static int __devexit tps6586x_vibrator_remove(struct platform_device *pdev)
 {
 	printk("tps6586x_vibrator_remove\n");
 	timed_output_dev_unregister(&tegra_vibrator);
