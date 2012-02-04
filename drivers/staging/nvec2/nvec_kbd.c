@@ -66,6 +66,15 @@ static int nvec_keys_notifier(struct notifier_block *nb,
 	struct nvec_event *ev  = (struct nvec_event *)data;
 	struct nvec_keys *keys = container_of(nb, struct nvec_keys, notifier);
 
+	dev_info(keys->dev,"Got event type: 0x%02x\n", event_type);
+
+	if (event_type == NVEC_EV_OEM1) {
+		for (i = 0; i < ev->size; i++) {
+			dev_info(keys->dev,"Remote: Payload %d/%d: 0x%02x\n", i+1, ev->size, ev->data[i]);
+		}
+		return NOTIFY_DONE;
+	}
+
 	/* If not a keyboard event, do not process it */ 
 	if (event_type != NVEC_EV_KEYBOARD) 
 		return NOTIFY_DONE;
