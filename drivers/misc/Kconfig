@@ -398,6 +398,12 @@ config SENSORS_AK8975
 	  If you say yes here you get support for Asahi Kasei's
 	  orientation sensor AK8975.
 
+config TPS6586X_VIBRATOR
+	tristate "TPS6586X Vibrator device"
+	default n
+	help
+	  Tegra vibrator
+
 config SENSORS_NCT1008
 	tristate "ON Semiconductor Temperature Sensor"
 	default n
