@@ -41,7 +41,7 @@ static void vibrator_start(void)
 {
  	int err = tps6586x_write(tps_dev, VIBRATOR_REGISTER, START_CMD );
 	if (err < 0) {
-		printk( "Failed to send start command\n");
+		pr_err( "Failed to send start command\n");
 	} 
 }
 
@@ -49,7 +49,7 @@ static void vibrator_stop(void)
 {
   	int err = tps6586x_write(tps_dev, VIBRATOR_REGISTER, STOP_CMD );
 	if (err < 0) {
-		printk( "Failed to send stop command\n");
+		pr_err( "Failed to send stop command\n");
 	}
 }
 
@@ -87,7 +87,7 @@ static int __devinit tps6586x_vibrator_probe(struct platform_device *pdev)
 	tps_dev = to_tps6586x_dev(&pdev->dev);
 	
 	// Add init information 
-	printk("tps6586x_vibrator_probe vibrator init\n");
+	pr_info("tps6586x_vibrator_probe vibrator init\n");
 
 	s_timeout = 0;
 	
@@ -99,7 +99,7 @@ static int __devinit tps6586x_vibrator_probe(struct platform_device *pdev)
 
 static int __devexit tps6586x_vibrator_remove(struct platform_device *pdev)
 {
-	printk("tps6586x_vibrator_remove\n");
+	pr_info("tps6586x_vibrator_remove\n");
 	timed_output_dev_unregister(&tegra_vibrator);
 	tps_dev = NULL;
 	return 0;
