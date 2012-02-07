@@ -57,6 +57,7 @@ static int betelgeuse_wifi_status_register(
 struct tegra_sdhci_platform_data betelgeuse_wifi_data = {
 	.mmc_data = {
 		.register_status_notify = betelgeuse_wifi_status_register,
+		.built_in = 1,
 	},
 	.cd_gpio = -1,
 	.wp_gpio = -1,
@@ -72,6 +73,9 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform_data2 = {
 
 // Internal SD
 static struct tegra_sdhci_platform_data tegra_sdhci_platform_data4 = {
+	.mmc_data = {
+		.built_in = 1,
+	},
 	.cd_gpio = BETELGEUSE_SDHC_INT_CD,
 	.wp_gpio = BETELGEUSE_SDHC_INT_WP,
 	.power_gpio = BETELGEUSE_SDHC_INT_POWER,
