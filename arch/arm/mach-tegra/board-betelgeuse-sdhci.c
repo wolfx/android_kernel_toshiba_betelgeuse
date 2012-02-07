@@ -32,36 +32,18 @@
 #include "gpio-names.h"
 #include "devices.h"
 #include "board-betelgeuse.h"
-#include "board-betelgeuse-sdhci.h"
 
 /* Make sure they are NOT trying to compile with a nonworking config */
-#ifdef CONFIG_MMC_EMBEDDED_SDIO
-#error  DISABLE MMC EMBEDDED SDIO, or WLAN wont work amd SD Cards could stop responding...
-#endif
-
-static void (*wifi_status_cb)(int card_present, void *dev_id) = NULL;
-static void *wifi_status_cb_devid = NULL;
-
-static int betelgeuse_wifi_status_register(
-		void (*callback)(int card_present, void *dev_id),
-		void *dev_id)
-{
-	if (wifi_status_cb)
-		return -EAGAIN;
-	wifi_status_cb = callback;
-	wifi_status_cb_devid = dev_id;
-	return 0;
-}
 
 // Wifi SD
 struct tegra_sdhci_platform_data betelgeuse_wifi_data = {
 	.mmc_data = {
-		.register_status_notify = betelgeuse_wifi_status_register,
+		 //.card_present = 1,
 		.built_in = 1,
 	},
 	.cd_gpio = -1,
 	.wp_gpio = -1,
-	.power_gpio = -1,
+	.power_gpio = BETELGEUSE_WLAN_RESET,
 };
 
 // External SD
