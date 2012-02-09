@@ -38,6 +38,13 @@ static struct platform_device betelgeuse_wifi_device = {
 	.id             = 1,
 };
 
+/* This function is called from ar6000.ko */
+void wlan_setup_power(int on, int detect)
+{
+	pr_info("%s: on: %i, detect:%i\n", __func__, on, detect);
+}
+EXPORT_SYMBOL(wlan_setup_power);
+
 static int __init betelgeuse_wifi_init(void)
 {
 	//gpio_request(BETELGEUSE_WLAN_POWER, "wifi_power");
