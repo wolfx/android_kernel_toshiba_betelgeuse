@@ -203,8 +203,6 @@ static struct tegra_gpio_table gpio_table[] = {
 	{ .gpio = BETELGEUSE_SDHC_EXT_WP,		.enable = true },
 	{ .gpio = BETELGEUSE_SDHC_EXT_POWER,		.enable = true },
 	{ .gpio = BETELGEUSE_TS_IRQ,			.enable = true },
-	{ .gpio = BETELGEUSE_WLAN_POWER,		.enable = true },
-	{ .gpio = BETELGEUSE_WLAN_RESET,		.enable = true },
 	{ .gpio = BETELGEUSE_LOW_BATT,			.enable = true },
 	{ .gpio = BETELGEUSE_IN_S3,			.enable = true },
 /*      { .gpio = BETELGEUSE_USB1_RESET,		.enable = true },*/

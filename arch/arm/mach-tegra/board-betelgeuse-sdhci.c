@@ -37,13 +37,9 @@
 
 // Wifi SD
 struct tegra_sdhci_platform_data betelgeuse_wifi_data = {
-	.mmc_data = {
-		 //.card_present = 1,
-		.built_in = 1,
-	},
 	.cd_gpio = -1,
 	.wp_gpio = -1,
-	.power_gpio = BETELGEUSE_WLAN_RESET,
+	.power_gpio = -1,
 };
 
 // External SD

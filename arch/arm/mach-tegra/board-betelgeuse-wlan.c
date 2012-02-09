@@ -47,21 +47,41 @@ EXPORT_SYMBOL(wlan_setup_power);
 
 static int __init betelgeuse_wifi_init(void)
 {
-	//gpio_request(BETELGEUSE_WLAN_POWER, "wifi_power");
-	//gpio_request(BETELGEUSE_WLAN_RESET, "wifi_reset");
-	//gpio_direction_output(BETELGEUSE_WLAN_POWER, 0);
-	//gpio_direction_output(BETELGEUSE_WLAN_RESET, 0);
-	//gpio_set_value(BETELGEUSE_WLAN_POWER, 1);
-	//gpio_set_value(BETELGEUSE_WLAN_RESET, 1);
+	int gpio_pwr, gpio_rst;
 	
-	platform_device_register(&betelgeuse_wifi_device);
+	//if (!machine_is_harmony())
+	//	return 0;
+
+	/* WLAN - Power up (low) and Reset (low) */
+	gpio_pwr = gpio_request(TEGRA_GPIO_WLAN_PWR_LOW, "wlan_pwr");
+	gpio_rst = gpio_request(TEGRA_GPIO_WLAN_RST_LOW, "wlan_rst");
+	if (gpio_pwr < 0 || gpio_rst < 0) {
+		pr_warning("Unable to get gpio for WLAN Power and Reset\n");
+	} else {
+		tegra_gpio_enable(TEGRA_GPIO_WLAN_PWR_LOW);
+		tegra_gpio_enable(TEGRA_GPIO_WLAN_RST_LOW);
+		/* toggle in this order as per spec */
+		gpio_direction_output(TEGRA_GPIO_WLAN_PWR_LOW, 0);
+		gpio_direction_output(TEGRA_GPIO_WLAN_RST_LOW, 0);
+		udelay(5);
+		gpio_direction_output(TEGRA_GPIO_WLAN_PWR_LOW, 1);
+		gpio_direction_output(TEGRA_GPIO_WLAN_RST_LOW, 1);
+	}
 	
 	return 0;
 }
 
+/*
+ * subsys_initcall_sync is good synch point to call harmony_wifi_init
+ * This makes sure that the required regulators (LDO3
+ * supply of external PMU and 1.2V regulator) are properly enabled,
+ * and mmc driver has not yet probed for a device on SDIO bus.
+ */
+subsys_initcall_sync(betelgeuse_wifi_init);
+
 extern int betelgeuse_wlan_register_devices(void)
 {
 	pr_info("%s: WIFI init start\n", __func__);
-	betelgeuse_wifi_init();
+	platform_device_register(&betelgeuse_wifi_device);
 	return 0;
 }
