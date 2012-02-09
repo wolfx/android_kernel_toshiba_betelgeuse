@@ -335,7 +335,7 @@ static void __init tegra_betelgeuse_fixup(struct machine_desc *desc,
 	mi->bank[0].size  = BETELGEUSE_MEM_SIZE;
 }
 
-MACHINE_START(LEGACY, "Toshiba Folio 100")
+MACHINE_START(BETELGEUSE, "betelgeuse")
 	.boot_params	= 0x00000100,
 	.map_io         = tegra_map_common_io,
 	.init_early     = tegra_init_early,
