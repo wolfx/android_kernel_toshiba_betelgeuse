@@ -100,13 +100,6 @@ static struct platform_device betelgeuse_backlight_device = {
 #ifdef CONFIG_TEGRA_DC
 static int betelgeuse_panel_enable(void)
 {
-	struct regulator *reg = regulator_get(NULL, "vdd_ldo4");
-
-	if (!reg) {
-		regulator_enable(reg);
-		regulator_put(reg);
-	}
-
 	gpio_set_value(BETELGEUSE_EN_VDD_PANEL, 1);
 	mdelay(betelgeuse_pnl_to_lvds_ms);
 	gpio_set_value(BETELGEUSE_LVDS_SHUTDOWN, 1);
