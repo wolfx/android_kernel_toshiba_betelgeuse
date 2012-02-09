@@ -48,9 +48,13 @@ EXPORT_SYMBOL(wlan_setup_power);
 static int __init betelgeuse_wifi_init(void)
 {
 	int gpio_pwr, gpio_rst;
+
+	pr_info("--- ### %s ### ---\n", __func__);
 	
-	//if (!machine_is_harmony())
-	//	return 0;
+	if (!machine_is_harmony()) {
+		//return 0;
+		pr_info("--- ### not harmony ### ---\n");
+	}
 
 	/* WLAN - Power up (low) and Reset (low) */
 	gpio_pwr = gpio_request(TEGRA_GPIO_WLAN_PWR_LOW, "wlan_pwr");
