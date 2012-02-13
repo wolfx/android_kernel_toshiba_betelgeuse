@@ -283,7 +283,7 @@ static int __devinit nvec_kbd_probe(struct platform_device *pdev)
 
 	/* Set capabilities */
 	set_bit(EV_KEY,input->evbit);
-	set_bit(EV_REP,input->evbit);
+//	set_bit(EV_REP,input->evbit);
 	set_bit(EV_LED,input->evbit);
 		
 	set_bit(LED_CAPSL,input->ledbit);
