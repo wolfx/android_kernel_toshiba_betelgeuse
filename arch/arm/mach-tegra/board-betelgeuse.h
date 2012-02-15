@@ -108,6 +108,11 @@
 #define TEGRA_GPIO_CDC_IRQ	TEGRA_GPIO_PX3
 #define TEGRA_GPIO_SPKR_EN	WM8903_GP3
 #define BETELGEUSE_HP_DETECT	TEGRA_GPIO_PW2 	/* HeadPhone detect for audio codec: 1=Hedphone plugged */
+#define TEGRA_GPIO_HP_DET	TEGRA_GPIO_PW2
+
+#define TEGRA_GPIO_INT_MIC_EN	TEGRA_GPIO_PX0
+#define TEGRA_GPIO_EXT_MIC_EN	TEGRA_GPIO_PX1
+
 
 /* The switch used to indicate rotation lock */
 //#define SW_ROTATION_LOCK 	(SW_MAX-1)
