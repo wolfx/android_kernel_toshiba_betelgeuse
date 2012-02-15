@@ -654,13 +654,22 @@ static int mmc_sdio_suspend(struct mmc_host *host)
 	return err;
 }
 
+#ifdef CONFIG_MACH_BETELGEUSE
+extern void wlan_setup_power( int enable , int detect ) ;
+#endif
+
 static int mmc_sdio_resume(struct mmc_host *host)
 {
 	int i, err = 0;
 
 	BUG_ON(!host);
 	BUG_ON(!host->card);
-
+#ifdef CONFIG_MACH_BETELGEUSE
+	wlan_setup_power(1,1) ;
+	// Give another 50ms to ar6000 hardware
+	mdelay(100) ;
+#endif
+	
 	/* Basic card reinitialization. */
 	mmc_claim_host(host);
 

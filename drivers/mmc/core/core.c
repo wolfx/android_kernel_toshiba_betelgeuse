@@ -1156,12 +1156,13 @@ static void mmc_power_off(struct mmc_host *host)
 	host->ios.clock = 0;
 	host->ios.vdd = 0;
 
+#ifndef CONFIG_MACH_BETELGEUSE	
 	/*
 	 * Reset ocr mask to be the highest possible voltage supported for
 	 * this mmc host. This value will be used at next power up.
 	 */
 	host->ocr = 1 << (fls(host->ocr_avail) - 1);
-
+#endif
 	if (!mmc_host_is_spi(host)) {
 		host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
 		host->ios.chip_select = MMC_CS_DONTCARE;
@@ -1231,8 +1232,16 @@ int mmc_resume_bus(struct mmc_host *host)
 		host->bus_ops->resume(host);
 	}
 
+#ifndef CONFIG_MACH_BETELGEUSE
 	if (host->bus_ops->detect && !host->bus_dead)
 		host->bus_ops->detect(host);
+#else
+        printk("ar6000 *** %s: host->skip_detect=[0x%x]\n", __func__, host->skip_detect);
+        if (host->bus_ops->detect && !host->bus_dead && !host->skip_detect) {
+                printk("ar6000 *** %s: do detecting\n", __func__);
+                host->bus_ops->detect(host);
+        }	
+#endif
 
 	mmc_bus_put(host);
 	printk("%s: Deferred resume completed\n", mmc_hostname(host));
