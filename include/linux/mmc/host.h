@@ -252,7 +252,9 @@ struct mmc_host {
 	unsigned int		max_blk_size;	/* maximum size of one mmc block */
 	unsigned int		max_blk_count;	/* maximum number of blocks in one req */
 	unsigned int		max_discard_to;	/* max. discard timeout in ms */
-
+#ifdef CONFIG_MACH_BETELGEUSE
+	unsigned int		skip_detect;
+#endif
 	/* private data */
 	spinlock_t		lock;		/* lock for claim and bus ops */
 

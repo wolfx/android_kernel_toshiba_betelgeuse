@@ -2317,7 +2317,11 @@ int sdhci_suspend_host(struct sdhci_host *host, pm_message_t state)
 			host->tuning_count * HZ);
 	}
 
+#ifndef CONFIG_MACH_BETELGEUSE	
 	if (mmc->card && (mmc->card->type != MMC_TYPE_SDIO))
+#else
+	if (mmc->card)
+#endif
 		ret = mmc_suspend_host(host->mmc);
 
 	if (host->flags & MMC_PM_KEEP_POWER)
@@ -2361,8 +2365,11 @@ int sdhci_resume_host(struct sdhci_host *host)
 	mmiowb();
 
 	if (mmc->card) {
+#ifndef CONFIG_MACH_BETELGEUSE	  
 		if (mmc->card->type != MMC_TYPE_SDIO) {
+#endif
 			ret = mmc_resume_host(host->mmc);
+#ifndef CONFIG_MACH_BETELGEUSE
 		} else {
 			/* Enable card interrupt as it is overwritten in sdhci_init */
 			if ((mmc->caps & MMC_CAP_SDIO_IRQ) &&
@@ -2370,6 +2377,7 @@ int sdhci_resume_host(struct sdhci_host *host)
 					if (host->card_int_set)
 						mmc->ops->enable_sdio_irq(mmc, true);
 		}
+#endif		
 	}
 
 	sdhci_enable_card_detection(host);
