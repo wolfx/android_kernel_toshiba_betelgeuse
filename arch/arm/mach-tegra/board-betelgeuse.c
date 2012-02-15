@@ -189,6 +189,13 @@ static struct platform_device tegra_dock_device =
 		.platform_data = &dock_on_platform_data,
 	},
 };
+static struct platform_device tegra_wlan_ar6000_pm_device = 
+{
+        .name           = "wlan_ar6000_pm",
+        .id             = 1,
+        .num_resources  = 0,
+        .resource       = NULL,
+};
 
 static struct platform_device *betelgeuse_devices[] __initdata = {
 	&tegra_gart_device,
@@ -229,6 +236,9 @@ static void __init tegra_betelgeuse_init(void)
 	/* Register the power subsystem - Including the poweroff handler - Required by all the others */
 	betelgeuse_power_register_devices();
 
+	/* Add ar6000 as it must be one of the first registered devices */
+	platform_device_register(&tegra_wlan_ar6000_pm_device);
+	
 	/* Register GPU devices */
 	betelgeuse_panel_init();
 

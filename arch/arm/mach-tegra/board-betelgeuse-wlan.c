@@ -41,7 +41,22 @@ static struct platform_device betelgeuse_wifi_device = {
 /* This function is called from ar6000.ko */
 void wlan_setup_power(int on, int detect)
 {
-	pr_info("%s: on: %i, detect:%i\n", __func__, on, detect);
+  pr_info("%s: on: %i, detect:%i\n", __func__, on, detect);
+       if( on )
+       {
+               pr_info("ar6000 *** %s: Power on\n", __func__);
+               //gpio_set_value(TEGRA_GPIO_WLAN_RST_LOW, 0x00);
+               //mdelay(5);
+               gpio_direction_output(TEGRA_GPIO_WLAN_RST_LOW, 0x01 );
+               mdelay(100);
+               pr_info("ar6000 *** %s: Power on done\n", __func__);
+       } 
+       else 
+       {
+               pr_info("ar6000 *** %s: Power off\n", __func__);
+               gpio_direction_output(TEGRA_GPIO_WLAN_RST_LOW, 0);
+               mdelay(50);
+       }	
 }
 EXPORT_SYMBOL(wlan_setup_power);
 
