@@ -392,10 +392,10 @@ int __init betelgeuse_panel_init(void)
 	gpio_direction_input(BETELGEUSE_HDMI_HPD);
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-	betelgeuse_panel_early_suspender.suspend = betelgeuse_panel_early_suspend;
-	betelgeuse_panel_early_suspender.resume = betelgeuse_panel_late_resume;
-	betelgeuse_panel_early_suspender.level = EARLY_SUSPEND_LEVEL_DISABLE_FB;
-	register_early_suspend(&betelgeuse_panel_early_suspender);
+//	betelgeuse_panel_early_suspender.suspend = betelgeuse_panel_early_suspend;
+//	betelgeuse_panel_early_suspender.resume = betelgeuse_panel_late_resume;
+//	betelgeuse_panel_early_suspender.level = EARLY_SUSPEND_LEVEL_DISABLE_FB;
+//	register_early_suspend(&betelgeuse_panel_early_suspender);
 #endif
 
 	betelgeuse_carveouts[1].base = tegra_carveout_start;
