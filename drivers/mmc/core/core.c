@@ -1156,12 +1156,17 @@ static void mmc_power_off(struct mmc_host *host)
 	host->ios.clock = 0;
 	host->ios.vdd = 0;
 
-#ifndef CONFIG_MACH_BETELGEUSE	
 	/*
 	 * Reset ocr mask to be the highest possible voltage supported for
 	 * this mmc host. This value will be used at next power up.
 	 */
+#ifdef CONFIG_MACH_BETELGEUSE	
+	if( host->card && host->card->type != MMC_TYPE_SDIO ) 
+	{
+#endif
 	host->ocr = 1 << (fls(host->ocr_avail) - 1);
+#ifdef CONFIG_MACH_BETELGEUSE	
+	}
 #endif
 	if (!mmc_host_is_spi(host)) {
 		host->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
