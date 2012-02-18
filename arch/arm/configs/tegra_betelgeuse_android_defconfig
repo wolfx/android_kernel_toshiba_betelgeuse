@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.39.4 Kernel Configuration
-# Fri Feb 10 00:01:07 2012
+# Sat Feb 18 13:34:44 2012
 #
 CONFIG_ARM=y
 CONFIG_HAVE_PWM=y
@@ -873,7 +873,7 @@ CONFIG_WIRELESS_EXT=y
 CONFIG_WEXT_CORE=y
 CONFIG_WEXT_PROC=y
 CONFIG_WEXT_PRIV=y
-CONFIG_CFG80211=m
+CONFIG_CFG80211=y
 # CONFIG_NL80211_TESTMODE is not set
 # CONFIG_CFG80211_DEVELOPER_WARNINGS is not set
 # CONFIG_CFG80211_REG_DEBUG is not set
