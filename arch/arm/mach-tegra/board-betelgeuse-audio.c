@@ -15,8 +15,6 @@
  */
 
 /* All configurations related to audio */
-/*#define ALC5623_IS_MASTER */
- 
 #include <linux/console.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -75,13 +73,10 @@ static struct i2c_board_info __initdata wm8903_board_info = {
 
 static struct tegra_wm8903_platform_data betelgeuse_audio_pdata = {
 	.gpio_spkr_en           = TEGRA_GPIO_SPKR_EN,
-	//.gpio_hp_det            = TEGRA_GPIO_HP_DET,
 	.gpio_hp_det		= -1,
 	.gpio_hp_mute           = -1,
-	//.gpio_int_mic_en	= -1,
-	//.gpio_ext_mic_en	= -1,
-	.gpio_int_mic_en        = TEGRA_GPIO_INT_MIC_EN,
-	.gpio_ext_mic_en        = TEGRA_GPIO_EXT_MIC_EN,
+	.gpio_int_mic_en	= -1,
+	.gpio_ext_mic_en	= -1,
 };
 
 static struct platform_device betelgeuse_audio_device = {
@@ -108,11 +103,6 @@ int __init betelgeuse_audio_register_devices(void)
 	int ret;
 
 	pr_info("Audio: betelgeuse_audio_init\n");
-
-	/* Patch in the platform data */
-	//tegra_i2s_device1.dev.platform_data = &tegra_audio_pdata[0];
-	//tegra_i2s_device2.dev.platform_data = &tegra_audio_pdata[1];
-	//tegra_spdif_device.dev.platform_data = &tegra_spdif_pdata;
 
 	ret = i2c_register_board_info(0, &wm8903_board_info, 1);
 	if (ret)
