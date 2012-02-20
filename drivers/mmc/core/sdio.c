@@ -665,9 +665,10 @@ static int mmc_sdio_resume(struct mmc_host *host)
 	BUG_ON(!host);
 	BUG_ON(!host->card);
 #ifdef CONFIG_MACH_BETELGEUSE
+	pr_info("%s before wlan_setup_power hostname : %s \n",__func__,mmc_hostname(host)) ;
 	wlan_setup_power(1,1) ;
 	// Give another 50ms to ar6000 hardware
-	mdelay(100) ;
+	mdelay(150) ;
 #endif
 	
 	/* Basic card reinitialization. */

@@ -60,9 +60,9 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform_data4 = {
 };
 
 static struct platform_device *betelgeuse_sdhci_devices[] __initdata = {
-	&tegra_sdhci_device1,
 	&tegra_sdhci_device4,
 	&tegra_sdhci_device2,
+	&tegra_sdhci_device1,
 };
 
 /* Register sdhci devices */
@@ -70,9 +70,9 @@ int __init betelgeuse_sdhci_register_devices(void)
 {
 	int ret=0;
 	/* Plug in platform data */
-	tegra_sdhci_device1.dev.platform_data = &betelgeuse_wifi_data;
 	tegra_sdhci_device2.dev.platform_data = &tegra_sdhci_platform_data2;
 	tegra_sdhci_device4.dev.platform_data = &tegra_sdhci_platform_data4;
+	tegra_sdhci_device1.dev.platform_data = &betelgeuse_wifi_data;
 
 	ret = platform_add_devices(betelgeuse_sdhci_devices, ARRAY_SIZE(betelgeuse_sdhci_devices));
 	return ret;
