@@ -624,7 +624,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 				ARRAY_SIZE(tegra_wm8903_default_dapm_widgets));
 	}
 
-	if (machine_is_harmony()) {
+	if (machine_is_harmony() || machine_is_betelgeuse()) {
 		snd_soc_dapm_add_routes(dapm, harmony_audio_map,
 					ARRAY_SIZE(harmony_audio_map));
 	} else if (machine_is_cardhu() || machine_is_ventana()) {
@@ -675,10 +675,10 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_force_enable_pin(dapm, "Mic Bias");
 
 	/* FIXME: Calculate automatically based on DAPM routes? */
-	if (!machine_is_harmony() && !machine_is_ventana() &&
+	if (!machine_is_harmony() && !machine_is_ventana() && !machine_is_betelgeuse() &&
 	    !machine_is_cardhu())
 		snd_soc_dapm_nc_pin(dapm, "IN1L");
-	if (!machine_is_seaboard() && !machine_is_aebl() && !machine_is_betelgeuse() &&
+	if (!machine_is_seaboard() && !machine_is_aebl() &&
 	    !machine_is_cardhu())
 		snd_soc_dapm_nc_pin(dapm, "IN1R");
 	snd_soc_dapm_nc_pin(dapm, "IN2L");
@@ -687,7 +687,7 @@ static int tegra_wm8903_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_nc_pin(dapm, "IN3L");
 	snd_soc_dapm_nc_pin(dapm, "IN3R");
 
-	if (machine_is_aebl() || machine_is_betelgeuse()) {
+	if (machine_is_aebl()) {
 		snd_soc_dapm_nc_pin(dapm, "LON");
 		snd_soc_dapm_nc_pin(dapm, "RON");
 		snd_soc_dapm_nc_pin(dapm, "ROP");
