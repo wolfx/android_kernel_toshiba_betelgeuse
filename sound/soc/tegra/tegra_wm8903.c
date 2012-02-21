@@ -119,7 +119,7 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
 
 	/* Use DSP mode for mono on Tegra20 */
 	if ((params_channels(params) != 2) &&
-	    (machine_is_ventana() || machine_is_harmony() ||
+	    (machine_is_ventana() || machine_is_harmony() || machine_is_betelgeuse() ||
 	    machine_is_kaen() || machine_is_aebl()))
 		i2s_daifmt |= SND_SOC_DAIFMT_DSP_A;
 	else
