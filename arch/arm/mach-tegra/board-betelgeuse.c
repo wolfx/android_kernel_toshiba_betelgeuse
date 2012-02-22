@@ -57,6 +57,7 @@
 #endif
 
 #include "board.h"
+#include "fuse.h"
 #include "board-betelgeuse.h"
 #include "clock.h"
 #include "gpio-names.h"
@@ -153,6 +154,21 @@ static int __init parse_tag_nvidia(const struct tag *tag)
         return 0;
 }
 __tagtable(ATAG_NVIDIA, parse_tag_nvidia);
+
+extern unsigned int system_serial_low;
+extern unsigned int system_serial_high;
+
+static int __init betelgeuse_export_chipid(void)
+{
+	unsigned long long chip_uid = tegra_chip_uid() ;
+
+	system_serial_low = ((unsigned int *)&chip_uid)[0] ;
+	system_serial_high = ((unsigned int *)&chip_uid)[1] ;
+
+	pr_info("%s : Chip UID 0x%llx\n", __func__, chip_uid ) ;
+	
+	return 0;
+}
 
 static struct tegra_suspend_platform_data betelgeuse_suspend = {
 	.cpu_timer = 5000,
@@ -302,7 +318,7 @@ static void __init tegra_betelgeuse_init(void)
 #ifdef CONFIG_TEGRA_WDT_RECOVERY
 	tegra_wdt_recovery_init();
 #endif
-	
+	betelgeuse_export_chipid();
 }
 
 static void __init betelgeuse_ramconsole_reserve(unsigned long size)
