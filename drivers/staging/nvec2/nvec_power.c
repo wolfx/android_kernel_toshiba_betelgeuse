@@ -693,8 +693,8 @@ static int nvec_power_notifier(struct notifier_block *nb,
 		charging_state = bat_event >> NVODM_BATTERY_REM_CAP_ALARM_SHIFT;
 		if (charging_state == NVODM_BATTERY_REM_CAP_ALARM_IS_SET) {
 			/* It is... just shutdown kernel */
-			pr_info("Battery critically low. Calling kernel_power_off()!\n");
-			kernel_power_off();
+			pr_info("Battery critically low 1. NOT calling kernel_power_off()!\n");
+			//kernel_power_off();
         } 	
 		
 		/* Propagate changes */
@@ -807,8 +807,8 @@ static void nvec_power_isr_work_func(struct work_struct *isr_work)
 		
 	/* If battery is below minimun, force a kernel shutdown */
 	if (power->capacity_remain < power->critical_capacity) {
-		pr_info("Battery critically low. Calling kernel_power_off()!\n");
-		kernel_power_off();
+		pr_info("Battery critically low 2. NOT calling kernel_power_off()!\n");
+		//kernel_power_off();
 	}
 		
 	enable_irq(power->low_batt_irq);
