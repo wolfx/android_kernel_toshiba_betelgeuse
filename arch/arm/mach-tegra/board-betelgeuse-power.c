@@ -43,7 +43,7 @@
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
 #include "devices.h"
-//#include "../../../drivers/staging/nvec2/nvec.h"
+#include "../../../drivers/staging/nvec2/nvec.h"
 
 
 #define PMC_CTRL		0x0

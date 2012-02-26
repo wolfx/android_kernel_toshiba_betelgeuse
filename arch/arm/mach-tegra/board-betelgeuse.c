@@ -245,7 +245,7 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_panel_init();
 
 	/* Register NVEC devices */
-//	betelgeuse_nvec_register_devices();
+	betelgeuse_nvec_register_devices();
 	
 	/* Register the USB device */
 	betelgeuse_usb_register_devices();
