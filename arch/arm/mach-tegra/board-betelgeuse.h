@@ -43,12 +43,6 @@
 
 /*#define BETELGEUSE_48KHZ_AUDIO*/ /* <- define this if you want 48khz audio sampling rate instead of 44100Hz */
 
-/* TPS6586X gpios */
-#define TPS6586X_GPIO_BASE      TEGRA_NR_GPIOS
-#define TPS6586X_GPIO(_x_)      (TPS6586X_GPIO_BASE + (_x_))
-#define TPS6586X_NR_GPIOS       4
-#define AVDD_DSI_CSI_ENB_GPIO   TPS6586X_GPIO(1) /* gpio2 */
-#define TPS6586X_GPIO_END       TPS6586X_GPIO(TPS6586X_NR_GPIOS - 1)
 
 // TPS6586x GPIOs as registered 
 #define PMU_GPIO_BASE		(TEGRA_NR_GPIOS) 
@@ -148,7 +142,5 @@ extern void betelgeuse_setup_bluesleep(void);
 extern void betelgeuse_bt_rfkill(void);
 extern int betelgeuse_camera_register_devices(void);
 extern int betelgeuse_nvec_register_devices(void);
-int __init betelgeuse_sdhci_init(void);
-int betelgeuse_regulator_init(void);
 
 #endif
