@@ -73,6 +73,13 @@ config MACH_HARMONY
        help
          Support for NVIDIA Harmony development platform
 
+config MACH_BETELGEUSE
+       bool "Betelgeuse board (Toshiba Folio 100)"
+       depends on ARCH_TEGRA_2x_SOC
+       select MACH_HAS_SND_SOC_TEGRA_WM8903 if SND_SOC
+       help
+         Support for Tosbiba Folio 100
+
 config MACH_VENTANA
        bool "Ventana board"
        depends on ARCH_TEGRA_2x_SOC
