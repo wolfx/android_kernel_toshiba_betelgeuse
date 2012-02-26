@@ -214,10 +214,11 @@ static void __init tegra_betelgeuse_init(void)
 	// console_suspend_enabled = 0;	
 
 	/* Init the suspend information */
-	tegra_init_suspend(&betelgeuse_suspend);
+//	tegra_init_suspend(&betelgeuse_suspend);
 
 	/* Set the SDMMC1 (wifi) tap delay to 6.  This value is determined
 	 * based on propagation delay on the PCB traces. */
+/*
 	clk = clk_get_sys("sdhci-tegra.0", NULL);
 	if (!IS_ERR(clk)) {
 		tegra_sdmmc_tap_delay(clk, 6);
@@ -225,7 +226,7 @@ static void __init tegra_betelgeuse_init(void)
 	} else {
 		pr_err("Failed to set wifi sdmmc tap delay\n");
 	}
-
+*/
 	/* Initialize the pinmux */
 	betelgeuse_pinmux_init();
 
@@ -236,7 +237,8 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_i2c_register_devices();
 
 	/* Register the power subsystem - Including the poweroff handler - Required by all the others */
-	betelgeuse_power_register_devices();
+	//betelgeuse_power_register_devices();
+	betelgeuse_regulator_init();
 
 	/* Add ar6000 as it must be one of the first registered devices */
 	platform_device_register(&tegra_wlan_ar6000_pm_device);
@@ -275,13 +277,14 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_touch_register_devices();
 	
 	/* Register SDHCI devices */
-	betelgeuse_sdhci_register_devices();
+	//betelgeuse_sdhci_register_devices();
+	betelgeuse_sdhci_init();
 
 	/* Register accelerometer device */
 	betelgeuse_sensors_register_devices();
 	
 	/* Register wlan devices */
-	betelgeuse_wlan_register_devices();
+	//betelgeuse_wlan_register_devices();
 	
 	/* Register Bluetooth powermanagement devices */
 	//betelgeuse_bt_pm_register_devices();
