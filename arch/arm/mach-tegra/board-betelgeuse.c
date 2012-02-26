@@ -278,7 +278,7 @@ static void __init tegra_betelgeuse_init(void)
 	betelgeuse_sdhci_register_devices();
 
 	/* Register accelerometer device */
-//	betelgeuse_sensors_register_devices();
+	betelgeuse_sensors_register_devices();
 	
 	/* Register wlan devices */
 	betelgeuse_wlan_register_devices();

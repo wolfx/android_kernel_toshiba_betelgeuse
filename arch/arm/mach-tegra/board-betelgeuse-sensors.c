@@ -24,7 +24,7 @@
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
 #include <linux/adt7461.h>
-#include <linux/akm8975.h>
+//#include <linux/akm8975.h>
 //#include <linux/i2c/ak8975.h>
 #include <linux/lsm303dlh.h>
 
@@ -32,6 +32,7 @@
 #include "gpio-names.h"
 #include "cpu-tegra.h"
 
+/*
 static struct akm8975_platform_data compass_platform_data = {
         .intr = TEGRA_GPIO_TO_IRQ(AKM8975_IRQ_GPIO),
         .init = NULL,
@@ -39,6 +40,7 @@ static struct akm8975_platform_data compass_platform_data = {
         .power_on = NULL,
         .power_off = NULL,
 };
+*/
 
 /*
 static struct akm8975_platform_data akm8975_pdata = {
@@ -100,7 +102,7 @@ static struct lsm303dlh_platform_data betelgeuse_lsm303dlh_pdata = {
 	.name_a = "acelerometer",
 	.name_m = "magnetometer",
 	.irq_a1 = TEGRA_GPIO_TO_IRQ(LSM303DHL_IRQ_GPIO),
-	.irq_a1 = -1,
+	.irq_a2 = -1,
 	.irq_m = -1,
 	.axis_map_x = 1,
 	.axis_map_y = 0,
