@@ -116,7 +116,7 @@ static struct regulator_consumer_supply tps658621_ldo3_supply[] = { /* 3V3 */
 	REGULATOR_SUPPLY("vmmc", NULL), /* vddio_mmc, but sdhci.c requires it to be called vmmc*/
 	REGULATOR_SUPPLY("vddio_vi", NULL),
 	REGULATOR_SUPPLY("avdd_lvds", NULL),
-	REGULATOR_SUPPLY("tmon0", NULL),
+	REGULATOR_SUPPLY("vdd_vcore_temp", NULL),
 };
 
 /* OSC voltage rail : AVDD_OSC -> LDO4
@@ -205,7 +205,7 @@ static struct regulator_consumer_supply fixed_buck_tps62290_supply[] = {
 */
 static struct regulator_consumer_supply fixed_ldo_tps72012_supply[] = {
 	REGULATOR_SUPPLY("avdd_dsi_csi", NULL),
-	REGULATOR_SUPPLY("vcore_wifi", NULL)
+	REGULATOR_SUPPLY("vcore_wifi", NULL),
 };
 
 /* PEX_CLK voltage rail : PMU_GPIO-1 -> VDD_1V5
@@ -289,10 +289,10 @@ static struct regulator_init_data soc_data
 	= ADJ_REGULATOR_INIT(soc, 1250, 3300, 1, 1);
 static struct regulator_init_data ldo_tps74201_data
 	= FIXED_REGULATOR_INIT(ldo_tps74201 , 1500, 0, 0 ); // 1500 (VDD1.5, enabled by PMU_GPIO[0] (0=enabled) - Turn it off as soon as we boot
-static struct regulator_init_data buck_tps62290_data 
+static struct regulator_init_data buck_tps62290_data
 	= FIXED_REGULATOR_INIT(buck_tps62290, 1050, 1, 1 ); // 1050 (VDD1.05, AVDD_PEX ... enabled by PMU_GPIO[2] (1=enabled)
-static struct regulator_init_data ldo_tps72012_data  
-	= FIXED_REGULATOR_INIT(ldo_tps72012 , 1200, 0, 0 ); // 1200 (VDD1.2, VCORE_WIFI ...) enabled by PMU_GPIO[1] (1=enabled) 
+static struct regulator_init_data ldo_tps72012_data
+	= FIXED_REGULATOR_INIT(ldo_tps72012 , 1200, 0, 0 ); // 1200 (VDD1.2, VCORE_WIFI ...) enabled by PMU_GPIO[1] (1=enabled)
 
 // vdd_aon is a virtual regulator used to allow frequency and voltage scaling of the CPU/EMC														
 static struct regulator_init_data vdd_aon_data =
