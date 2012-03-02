@@ -2100,6 +2100,10 @@ static void tegra3_periph_clk_init(struct clk *c)
 	}
 
 	c->state = ON;
+
+	if (c->flags & PERIPH_NO_ENB)
+		return;
+
 	if (!(clk_readl(PERIPH_CLK_TO_ENB_REG(c)) & PERIPH_CLK_TO_BIT(c)))
 		c->state = OFF;
 	if (!(c->flags & PERIPH_NO_RESET))
@@ -2111,6 +2115,9 @@ static int tegra3_periph_clk_enable(struct clk *c)
 {
 	unsigned long flags;
 	pr_debug("%s on clock %s\n", __func__, c->name);
+
+	if (c->flags & PERIPH_NO_ENB)
+		return 0;
 
 	spin_lock_irqsave(&periph_refcount_lock, flags);
 
@@ -2136,6 +2143,9 @@ static void tegra3_periph_clk_disable(struct clk *c)
 	unsigned long val, flags;
 	pr_debug("%s on clock %s\n", __func__, c->name);
 
+	if (c->flags & PERIPH_NO_ENB)
+		return;
+
 	spin_lock_irqsave(&periph_refcount_lock, flags);
 
 	if (c->refcnt)
@@ -2159,6 +2169,9 @@ static void tegra3_periph_clk_reset(struct clk *c, bool assert)
 	unsigned long val;
 	pr_debug("%s %s on clock %s\n", __func__,
 		 assert ? "assert" : "deassert", c->name);
+
+	if (c->flags & PERIPH_NO_ENB)
+		return;
 
 	if (!(c->flags & PERIPH_NO_RESET)) {
 		if (assert) {
@@ -3873,7 +3886,7 @@ static struct clk tegra_clk_sclk = {
 	.reg	= 0x28,
 	.ops	= &tegra_super_ops,
 	.max_rate = 334000000,
-	.min_rate = 12000000,
+	.min_rate = 40000000,
 };
 
 static struct clk tegra_clk_virtual_cpu_g = {
@@ -4221,11 +4234,16 @@ struct clk tegra_list_clks[] = {
 	PERIPH_CLK("owr",	"tegra_w1",		NULL,	71,	0x1cc,	26000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB),
 	PERIPH_CLK("nor",	"tegra-nor",		NULL,	42,	0x1d0,	127000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71), /* requires min voltage */
 	PERIPH_CLK("mipi",	"mipi",			NULL,	50,	0x174,	60000000,  mux_pllp_pllc_pllm_clkm,	MUX | DIV_U71 | PERIPH_ON_APB), /* scales with voltage */
-	PERIPH_CLK("i2c1",	"tegra-i2c.0",		NULL,	12,	0x124,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
-	PERIPH_CLK("i2c2",	"tegra-i2c.1",		NULL,	54,	0x198,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
-	PERIPH_CLK("i2c3",	"tegra-i2c.2",		NULL,	67,	0x1b8,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
-	PERIPH_CLK("i2c4",	"tegra-i2c.3",		NULL,	103,	0x3c4,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
-	PERIPH_CLK("i2c5",	"tegra-i2c.4",		NULL,	47,	0x128,	26000000,  mux_pllp_clkm,		MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c1",	"tegra-i2c.0",		"i2c-div",	12,	0x124,	26000000,  mux_pllp_clkm,	MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c2",	"tegra-i2c.1",		"i2c-div",	54,	0x198,	26000000,  mux_pllp_clkm,	MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c3",	"tegra-i2c.2",		"i2c-div",	67,	0x1b8,	26000000,  mux_pllp_clkm,	MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c4",	"tegra-i2c.3",		"i2c-div",	103,	0x3c4,	26000000,  mux_pllp_clkm,	MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c5",	"tegra-i2c.4",		"i2c-div",	47,	0x128,	26000000,  mux_pllp_clkm,	MUX | DIV_U16 | PERIPH_ON_APB),
+	PERIPH_CLK("i2c1-fast",	"tegra-i2c.0",		"i2c-fast",	0,	0,	108000000, mux_pllp_out3,	PERIPH_NO_ENB),
+	PERIPH_CLK("i2c2-fast",	"tegra-i2c.1",		"i2c-fast",	0,	0,	108000000, mux_pllp_out3,	PERIPH_NO_ENB),
+	PERIPH_CLK("i2c3-fast",	"tegra-i2c.2",		"i2c-fast",	0,	0,	108000000, mux_pllp_out3,	PERIPH_NO_ENB),
+	PERIPH_CLK("i2c4-fast",	"tegra-i2c.3",		"i2c-fast",	0,	0,	108000000, mux_pllp_out3,	PERIPH_NO_ENB),
+	PERIPH_CLK("i2c5-fast",	"tegra-i2c.4",		"i2c-fast",	0,	0,	108000000, mux_pllp_out3,	PERIPH_NO_ENB),
 	PERIPH_CLK("uarta",	"tegra_uart.0",		NULL,	6,	0x178,	900000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U151 | DIV_U151_UART | PERIPH_ON_APB),
 	PERIPH_CLK("uartb",	"tegra_uart.1",		NULL,	7,	0x17c,	900000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U151 | DIV_U151_UART | PERIPH_ON_APB),
 	PERIPH_CLK("uartc",	"tegra_uart.2",		NULL,	55,	0x1a0,	900000000, mux_pllp_pllc_pllm_clkm,	MUX | DIV_U151 | DIV_U151_UART | PERIPH_ON_APB),
@@ -4277,7 +4295,6 @@ struct clk tegra_list_clks[] = {
 	SHARED_CLK("usb1.sclk",	"tegra-ehci.0",		"sclk",	&tegra_clk_sbus_cmplx, NULL, 0, 0),
 	SHARED_CLK("usb2.sclk",	"tegra-ehci.1",		"sclk",	&tegra_clk_sbus_cmplx, NULL, 0, 0),
 	SHARED_CLK("usb3.sclk",	"tegra-ehci.2",		"sclk",	&tegra_clk_sbus_cmplx, NULL, 0, 0),
-	SHARED_CLK("wake.sclk",	"wake_sclk",		"sclk",	&tegra_clk_sbus_cmplx, NULL, 0, 0),
 	SHARED_CLK("mon.avp",	"tegra_actmon",		"avp",	&tegra_clk_sbus_cmplx, NULL, 0, 0),
 	SHARED_CLK("cap.sclk",	"cap_sclk",		NULL,	&tegra_clk_sbus_cmplx, NULL, 0, SHARED_CEILING),
 	SHARED_CLK("floor.sclk", "floor_sclk",		NULL,	&tegra_clk_sbus_cmplx, NULL, 0, 0),
