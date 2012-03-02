@@ -402,7 +402,8 @@ static struct tps6586x_platform_data tps_platform = {
 	.gpio_base = PMU_GPIO_BASE,
 	.irq_base  = PMU_IRQ_BASE,
 	.subdevs   = tps_devs,
-	.num_subdevs = ARRAY_SIZE(tps_devs),	
+	.num_subdevs = ARRAY_SIZE(tps_devs),
+	.use_power_off  = true,
 };
 
 static struct i2c_board_info __initdata betelgeuse_regulators[] = {
