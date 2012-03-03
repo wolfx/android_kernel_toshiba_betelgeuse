@@ -69,7 +69,7 @@ static struct tegra_utmip_config utmi_phy_config[] = {
 			.idle_wait_delay = 17,
 			.elastic_limit = 16,
 			.term_range_adj = 6,
-			.xcvr_setup = 8,
+			.xcvr_setup = 9,
 			.xcvr_lsfslew = 2,
 			.xcvr_lsrslew = 2,
 	},
@@ -83,7 +83,7 @@ static struct tegra_ulpi_config ulpi_phy_config = {
 static struct usb_phy_plat_data tegra_usb_phy_pdata[] = {
 	[0] = {
 			.instance = 0,
-			//.vbus_irq = TPS6586X_INT_BASE + TPS6586X_INT_USB_DET,
+			.vbus_irq = TPS6586X_INT_BASE + TPS6586X_INT_USB_DET,
 			.vbus_gpio = BETELGEUSE_USB0_VBUS,
 	},
 	[1] = {
