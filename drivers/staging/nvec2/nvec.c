@@ -1315,7 +1315,7 @@ static int __devinit tegra_nvec_probe(struct platform_device *pdev)
 
 	nvec->i2c_regs = i2c_regs;
 
-	i2c_clk = clk_get_sys(pdata->clock, NULL);
+	i2c_clk = clk_get_sys(pdata->clock, "i2c-div");
 	if (IS_ERR_OR_NULL(i2c_clk)) {
 		dev_err(nvec->dev, "failed to get clock tegra-i2c.2\n");
 		goto failed;
