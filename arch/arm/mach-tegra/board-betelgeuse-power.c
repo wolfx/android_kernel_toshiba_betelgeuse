@@ -45,7 +45,7 @@
 #include "board-betelgeuse.h"
 #include "gpio-names.h"
 #include "devices.h"
-
+#include "../../../drivers/staging/nvec2/nvec.h"
 
 #define PMC_CTRL		0x0
 #define PMC_CTRL_INTR_LOW	(1 << 17)
@@ -572,6 +572,12 @@ static struct platform_device *betelgeuse_power_devices[] __initdata = {
 	&tegra_rtc_device,
 };
 
+static void betelgeuse_power_off(void)
+{
+	/* Power down through NvEC */
+	nvec_poweroff();
+}
+
 /* Init power management unit of Tegra2 */
 int __init betelgeuse_power_register_devices(void)
 {
@@ -588,6 +594,9 @@ int __init betelgeuse_power_register_devices(void)
 	err = i2c_register_board_info(4, betelgeuse_regulators, 1);
 	if (err < 0) 
 		pr_warning("Unable to initialize regulator\n");
+
+	/* register the poweroff callback */
+	pm_power_off = betelgeuse_power_off;
 
 	/* And the restart callback */
 	tegra_setup_reboot();
