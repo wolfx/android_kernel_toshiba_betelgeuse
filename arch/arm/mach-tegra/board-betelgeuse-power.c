@@ -357,15 +357,13 @@ static struct virtual_adj_voltage_config vdd_aon_cfg = {
 
 
 static struct tps6586x_rtc_platform_data betelgeuse_rtc_data = {
-	.irq	= -1,  /* Shuttlle has no IRQ for this RTC :( */
+	.irq	= TEGRA_NR_IRQS + TPS6586X_INT_RTC_ALM1,
 	.start = {
-		.year  = 2011,
+		.year  = 2009,
 		.month = 1,
 		.day   = 1,
-		.hour  = 1,
-		.min   = 1,
-		.sec   = 1,
 	},
+	.cl_sel = TPS6586X_RTC_CL_SEL_1_5PF /* use lowest (external 20pF cap) */
 };
 
 static struct tps6586x_subdev_info tps_devs[] = {
@@ -409,7 +407,8 @@ static struct tps6586x_platform_data tps_platform = {
 static struct i2c_board_info __initdata betelgeuse_regulators[] = {
 	{
 		I2C_BOARD_INFO("tps6586x", 0x34),
-		.platform_data = &tps_platform,
+		.irq		= INT_EXTERNAL_PMU,
+		.platform_data	= &tps_platform,
 	},
 };
 
