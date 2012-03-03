@@ -81,20 +81,19 @@ static struct adt7461_platform_data betelgeuse_adt7461_pdata = {
 	.shutdown_local_limit = 120,
 	.throttling_ext_limit = 90,
 	.alarm_fn = tegra_throttling_enable,
+	.irq_gpio = ADT7461_IRQ_GPIO,
 };
 
 
 static struct i2c_board_info __initdata adt7461_device = {
 	I2C_BOARD_INFO("adt7461", 0x4c),
-	.irq = TEGRA_GPIO_TO_IRQ(BETELGEUSE_TEMP_ALERT),
+	.irq = TEGRA_GPIO_TO_IRQ(ADT7461_IRQ_GPIO),
 	.platform_data = &betelgeuse_adt7461_pdata,
 };
 
 static void betelgeuse_adt7461_init(void)
 {
-	gpio_request(BETELGEUSE_TEMP_ALERT, "adt7461_temp_alert_irq");
-	gpio_direction_input(BETELGEUSE_TEMP_ALERT);
-
+	tegra_gpio_enable(ADT7461_IRQ_GPIO);
 	i2c_register_board_info(4, &adt7461_device, 1);
 }
 
