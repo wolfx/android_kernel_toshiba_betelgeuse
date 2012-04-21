@@ -324,9 +324,6 @@ static struct platform_device betelgeuse_nvmap_device = {
 
 static struct platform_device *betelgeuse_gfx_devices[] __initdata = {
 	&betelgeuse_nvmap_device,
-#ifdef CONFIG_TEGRA_GRHOST
-	&tegra_grhost_device,
-#endif
 	&tegra_pwfm0_device,
 	&betelgeuse_backlight_device,
 };
@@ -400,6 +397,12 @@ int __init betelgeuse_panel_init(void)
 
 	betelgeuse_carveouts[1].base = tegra_carveout_start;
 	betelgeuse_carveouts[1].size = tegra_carveout_size;
+
+#ifdef CONFIG_TEGRA_GRHOST
+	err = nvhost_device_register(&tegra_grhost_device);
+	if (err)
+		return err;
+#endif
 
 	err = platform_add_devices(betelgeuse_gfx_devices,
 				   ARRAY_SIZE(betelgeuse_gfx_devices));
