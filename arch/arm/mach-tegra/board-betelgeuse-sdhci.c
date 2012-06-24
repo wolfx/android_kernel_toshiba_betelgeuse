@@ -37,6 +37,7 @@
 
 // Wifi SD
 struct tegra_sdhci_platform_data betelgeuse_wifi_data = {
+	.pm_flags = MMC_PM_KEEP_POWER,
 	.cd_gpio = -1,
 	.wp_gpio = -1,
 	.power_gpio = -1,
