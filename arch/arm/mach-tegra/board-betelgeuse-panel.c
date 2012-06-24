@@ -217,8 +217,8 @@ static struct tegra_fb_data betelgeuse_fb_data = {
 
 static struct tegra_fb_data betelgeuse_hdmi_fb_data = {
 	.win		= 0,
-	.xres		= 1280,
-	.yres		= 720,
+	.xres		= 640,
+	.yres		= 480,
 	.bits_per_pixel	= 32,
 	.flags		= TEGRA_FB_FLIP_ON_PROBE,
 };
@@ -427,6 +427,10 @@ int __init betelgeuse_panel_init(void)
 	/* Copy the bootloader fb to the fb. */
 	tegra_move_framebuffer(tegra_fb_start, tegra_bootloader_fb_start,
 		min(tegra_fb_size, tegra_bootloader_fb_size));
+
+        /* Copy the bootloader fb to the fb2. */
+        tegra_move_framebuffer(tegra_fb2_start, tegra_bootloader_fb_start,
+                min(tegra_fb2_size, tegra_bootloader_fb_size));
 
 #if defined(CONFIG_TEGRA_GRHOST) && defined(CONFIG_TEGRA_DC)
 	if (!err)
