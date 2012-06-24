@@ -60,6 +60,7 @@ void wlan_setup_power(int on, int detect)
 }
 EXPORT_SYMBOL(wlan_setup_power);
 
+#ifdef CONFIG_TEGRA_PREPOWER_WIFI
 static int __init betelgeuse_wifi_init(void)
 {
 	int gpio_pwr, gpio_rst;
@@ -97,6 +98,7 @@ static int __init betelgeuse_wifi_init(void)
  * and mmc driver has not yet probed for a device on SDIO bus.
  */
 subsys_initcall_sync(betelgeuse_wifi_init);
+#endif
 
 extern int betelgeuse_wlan_register_devices(void)
 {
