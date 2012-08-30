@@ -178,20 +178,10 @@ static struct regulator_consumer_supply tps658621_ldo9_supply[] = {
 	REGULATOR_SUPPLY("vdd_ddr_rx", NULL),
 };
 
-static struct regulator_consumer_supply tps658621_rtc_supply[] = {
-	REGULATOR_SUPPLY("vdd_rtc_2", NULL)
-};
-
 /* unused */
 /*static struct regulator_consumer_supply tps658621_buck_supply[] = {
 	REGULATOR_SUPPLY("pll_e", NULL),
 };*/
-
-/* Super power voltage rail for the SOC : VDD SOC
-*/
-static struct regulator_consumer_supply tps658621_soc_supply[] = {
-	REGULATOR_SUPPLY("vdd_soc", NULL)
-};
 
 /* PLLE voltage rail : AVDD_PLLE -> VDD_1V05
    PEX_CLK voltage rail : AVDD_PLLE -> VDD_1V05
@@ -280,13 +270,9 @@ static struct regulator_init_data ldo8_data
 	= ADJ_REGULATOR_INIT(ldo8,1250, 3350, 0, 0); // 1800  V-2V8
 static struct regulator_init_data ldo9_data
 	= ADJ_REGULATOR_INIT(ldo9,1250, 3350, 1, 1); // 2850
-static struct regulator_init_data rtc_data
-	= ADJ_REGULATOR_INIT(rtc, 1250, 3350, 1, 1); // 3300
 /*static struct regulator_init_data buck_data
 	= ADJ_REGULATOR_INIT(buck,1250, 3350, 0, 0); // 3300*/
 
-static struct regulator_init_data soc_data
-	= ADJ_REGULATOR_INIT(soc, 1250, 3300, 1, 1);
 static struct regulator_init_data ldo_tps74201_data
 	= FIXED_REGULATOR_INIT(ldo_tps74201 , 1500, 0, 0 ); // 1500 (VDD1.5, enabled by PMU_GPIO[0] (0=enabled) - Turn it off as soon as we boot
 static struct regulator_init_data buck_tps62290_data
@@ -356,7 +342,7 @@ static struct virtual_adj_voltage_config vdd_aon_cfg = {
 	} 	
 
 
-static struct tps6586x_rtc_platform_data betelgeuse_rtc_data = {
+static struct tps6586x_rtc_platform_data rtc_data = {
 	.irq	= TEGRA_NR_IRQS + TPS6586X_INT_RTC_ALM1,
 	.start = {
 		.year  = 2009,
@@ -380,15 +366,13 @@ static struct tps6586x_subdev_info tps_devs[] = {
 	TPS_ADJ_REG(LDO_7, &ldo7_data),
 	TPS_ADJ_REG(LDO_8, &ldo8_data),
 	TPS_ADJ_REG(LDO_9, &ldo9_data),
-	TPS_ADJ_REG(LDO_RTC, &rtc_data),
-	TPS_ADJ_REG(LDO_SOC, &soc_data),
 	TPS_GPIO_FIX_REG(0, &ldo_tps74201_cfg),
 	TPS_GPIO_FIX_REG(1, &buck_tps62290_cfg),
 	TPS_GPIO_FIX_REG(2, &ldo_tps72012_cfg),
 	{
 		.id		= -1,
 		.name		= "tps6586x-rtc",
-		.platform_data	= &betelgeuse_rtc_data,
+		.platform_data	= &rtc_data,
 	},
 	{
 		.id		= -1,
@@ -430,26 +414,6 @@ static struct platform_device betelgeuse_vdd_aon_reg_device =
 		.platform_data = &vdd_aon_cfg,
 	},
 };
-
-static void reg_off(const char *reg)
-{
-	int rc;
-	struct regulator *regulator;
-
-	regulator = regulator_get(NULL, reg);
-
-	if (IS_ERR(regulator)) {
-		pr_err("%s: regulator_get returned %ld\n", __func__,
-		       PTR_ERR(regulator));
-		return;
-	}
-
-	/* force disabling of regulator to turn off system */
-	rc = regulator_force_disable(regulator);
-	if (rc)
-		pr_err("%s: regulator_disable returned %d\n", __func__, rc);
-	regulator_put(regulator);
-}
 
 static void reg_on(const char *reg)
 {
