@@ -1,0 +1,35 @@
+config MFD_NVEC
+        bool "Support for NVidia Embedded controller"
+        select MFD_CORE
+        depends on MACH_SHUTTLE || MACH_BETELGEUSE
+        help
+          Support for the NVidia embedded controller used on several
+          Tegra2 based boards.
+          This driver provides common support for accessing the device,
+          additional drivers must be enabled in order to use the
+          functionality of the device.
+
+config NVEC_POWER
+        tristate "NVidia Embedded controller Power driver"
+        depends on MFD_NVEC
+        help
+          Say Y here to enable Nvidia embedded controller power driver for
+          Tegra2 based boards
+
+config MOUSE_NVEC
+        tristate "Support for PS2 mouse attached to the NVidia Embedded controller"
+        select MFD_CORE
+        select SERIO
+        select SERIO_LIBPS2
+        depends on MFD_NVEC
+        help
+          Support for a Ps2 Mouse attached to the NVidia embedded
+          controller used on several Tegra2 based boards.
+
+config KEYBOARD_NVEC
+        tristate "Support for PS2 keyboard attached to the NVidia Embedded controller"
+        select MFD_CORE
+        depends on MFD_NVEC
+        help
+          Support for a Ps2 keyboard attached to the NVidia embedded
+          controller used on several Tegra2 based boards.
