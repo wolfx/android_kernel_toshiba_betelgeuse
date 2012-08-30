@@ -53,6 +53,7 @@ obj-$(CONFIG_WL127X_RFKILL)	+= wl127x-rfkill.o
 obj-$(CONFIG_APANIC)		+= apanic.o
 obj-$(CONFIG_SENSORS_AK8975)	+= akm8975.o
 obj-$(CONFIG_SENSORS_AK8975)	+= mm_ak8975.o
+obj-$(CONFIG_TPS6586X_VIBRATOR)	+= tps6586x-vibrator.o
 obj-$(CONFIG_SENSORS_NCT1008)	+= nct1008.o
 obj-$(CONFIG_BCM4329_RFKILL)	+= bcm4329_rfkill.o
 obj-$(CONFIG_INV_SENSORS)      += inv_mpu/
