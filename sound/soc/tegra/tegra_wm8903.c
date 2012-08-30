@@ -143,7 +143,7 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
 
 	/* Use DSP mode for mono on Tegra20 */
 	if ((params_channels(params) != 2) &&
-	    (machine_is_ventana() || machine_is_harmony() ||
+	    (machine_is_ventana() || machine_is_harmony() || machine_is_betelgeuse() ||
 	    machine_is_kaen() || machine_is_aebl()))
 		i2s_daifmt |= SND_SOC_DAIFMT_DSP_A;
 	else
@@ -373,7 +373,12 @@ static int tegra_wm8903_jack_notifier(struct notifier_block *self,
 		state = BIT_HEADSET;
 		break;
 	case SND_JACK_MICROPHONE:
+		/* TODO use HP detect instead of MIC */
 		/* mic: would not report */
+		if (machine_is_betelgeuse()) {
+			state = BIT_HEADSET_NO_MIC;
+			break;
+		}
 	default:
 		state = BIT_NO_HEADSET;
 	}
