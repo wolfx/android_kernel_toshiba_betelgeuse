@@ -1076,6 +1076,20 @@ config SENSORS_TEGRA_TSENSOR
 	  If you say yes here you get support for integrated
 	  temperature sensor in Nvidia tegra chipset.
 
+config SENSORS_LSM303DLH
+        tristate "ST LSM303DLH 3-axis accelerometer and 3-axis magnetometer"
+        depends on I2C
+        default n
+        help
+          This driver provides support for the LSM303DLH chip which includes a
+          3-axis accelerometer and a 3-axis magnetometer.
+
+          This driver can also be built as modules.  If so, the module for
+          accelerometer will be called lsm303dlh_a and for magnetometer it will
+          be called lsm303dlh_m.
+
+          Say Y here if you have a device containing lsm303dlh chip.
+
 config SENSORS_THMC50
 	tristate "Texas Instruments THMC50 / Analog Devices ADM1022"
 	depends on I2C
