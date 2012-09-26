@@ -18,6 +18,9 @@
 #include <linux/interrupt.h>
 #include <linux/gpio.h>
 #include <linux/slab.h>
+#if defined(CONFIG_HAS_EARLYSUSPEND)
+#include <linux/earlysuspend.h>
+#endif
 
 #define DRIVER_NAME	"foliocap_kbd"
 #define DRIVER_AUTHOR	"Artem Makhutov <artem@makhutov.org>"
@@ -67,6 +70,11 @@
 #define FW_REV_ID_1            0x01000200  // FW reversion identification
 #define FW_REV_ID_0            0x01000108  // FW reversion identification
 
+#ifdef CONFIG_HAS_EARLYSUSPEND
+static void foliocap_early_suspend(struct early_suspend *es);
+static void foliocap_late_resume(struct early_suspend *es);
+#endif
+
 static unsigned int cap_sensitivity_v1 = 0x08151515;	// Default Sensitivity [08] [21] [21] [21] for Cap Sensor board V1.0 FW(CSM + difital filter)
 static unsigned int cap_sensitivity_v2 = 0x646E8C78;	// Default Sensitivity [100][110][140][120]for Cap Sensor board V2.0 FW (CVD + difital filter)
 static volatile unsigned int keyEvent = 0;
@@ -77,6 +85,10 @@ struct foliocap_kbd_dev {
 
 	/* input dev */
 	struct input_dev *input_dev;
+
+	#if defined(CONFIG_HAS_EARLYSUSPEND)
+	struct early_suspend early_suspend;
+	#endif
 };
 
 struct foliocap_kbd_info {
@@ -489,6 +501,13 @@ static int foliocap_kbd_probe(struct i2c_client *client, const struct i2c_device
 	if (input_register_device(dev->input_dev)) {
 		goto failed_register_input;
 	}
+
+	#if defined(CONFIG_HAS_EARLYSUSPEND)
+	dev->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN;
+	dev->early_suspend.suspend = foliocap_early_suspend;
+	dev->early_suspend.resume = foliocap_late_resume;
+	register_early_suspend(&dev->early_suspend);
+	#endif
 	
 	foliocapInit(dev);
 
@@ -497,6 +516,9 @@ static int foliocap_kbd_probe(struct i2c_client *client, const struct i2c_device
 
 	return 0;
 failed_enable_irq:
+	#ifdef CONFIG_HAS_EARLYSUSPEND
+	unregister_early_suspend(&dev->early_suspend);
+	#endif
 	input_unregister_device(dev->input_dev);
 failed_register_input:
 	input_free_device(dev->input_dev);	
@@ -512,12 +534,91 @@ static int foliocap_kbd_remove(struct i2c_client *client)
 	struct foliocap_kbd_dev *dev;
 	dev = (struct foliocap_kbd_dev *)i2c_get_clientdata(client);
 	
+	#ifdef CONFIG_HAS_EARLYSUSPEND
+	unregister_early_suspend(&dev->early_suspend);
+	#endif
 	free_irq(client->irq, dev);
 	input_unregister_device(dev->input_dev);
 	input_free_device(dev->input_dev);
 	kfree(dev);
 	return 0;
 }
+
+/*
+    Set Cap Sensor Board into Suspend
+*/
+int foliocapSendSuspend(struct foliocap_kbd_dev *dev) {
+	__u8  testVal = 0;
+
+	writeReg(dev, INT_REG, &testVal, 1);
+	writeReg(dev, LED_CTRL_REG, &testVal, 1);
+
+	testVal = 0xff;
+	writeReg(dev, LED_MANUAL_MODE_REG, &testVal, 1);
+
+	return 0;
+}
+
+/*
+    Set Cap Sensor Board into Resume
+*/
+int foliocapSendResume(struct foliocap_kbd_dev *dev) {
+	__u8  testVal = 0x01;
+
+	writeReg(dev, INT_REG, &testVal, 1);
+	writeReg(dev, LED_CTRL_REG, &testVal, 1);
+
+	testVal = 0x00;
+	writeReg(dev, LED_MANUAL_MODE_REG, &testVal, 1);
+
+	return 0;
+}
+
+#ifdef CONFIG_HAS_EARLYSUSPEND
+static void foliocap_early_suspend(struct early_suspend *es)
+{
+	struct foliocap_kbd_dev *dev;
+	dev = (struct foliocap_kbd_dev *)container_of(es, struct foliocap_kbd_dev, early_suspend);
+
+	logd (TAG "foliocap_early_suspend\n");
+	foliocapSendSuspend(dev);
+}
+
+static void foliocap_late_resume(struct early_suspend *es)
+{
+	struct foliocap_kbd_dev *dev;
+	dev = (struct foliocap_kbd_dev *)container_of(es, struct foliocap_kbd_dev, early_suspend);
+
+	logd (TAG "foliocap_late_resume\n");
+	foliocapSendResume(dev);
+}
+#endif
+
+#ifndef CONFIG_HAS_EARLYSUSPEND
+static int foliocap_suspend(struct i2c_client *client, pm_message_t state)
+{
+	struct foliocap_kbd_dev *dev = i2c_get_clientdata(client);
+
+	if (WARN_ON(!dev))
+		return -EINVAL;
+
+	foliocapSendSuspend(dev);
+
+	return 0;
+}
+
+static int foliocap_resume(struct i2c_client *client)
+{
+	struct foliocap_kbd_dev *dev = i2c_get_clientdata(client);
+
+	if (WARN_ON(!dev))
+		return -EINVAL;
+
+	foliocapSendResume(dev);
+
+	return 0;
+}
+#endif
 
 static const struct i2c_device_id foliocap_kbd_id[] = {
 	{ DRIVER_NAME, 0 },
@@ -527,6 +628,10 @@ static const struct i2c_device_id foliocap_kbd_id[] = {
 static struct i2c_driver foliocap_kbd_driver = {
 	.probe		= foliocap_kbd_probe,
 	.remove		= foliocap_kbd_remove,
+#ifndef CONFIG_HAS_EARLYSUSPEND
+	.suspend	= foliocap_suspend,
+	.resume		= foliocap_resume,
+#endif
 	.id_table	= foliocap_kbd_id,
 	.driver		= {
 		.name	= DRIVER_NAME,
