@@ -122,8 +122,19 @@ static void betelgeuse_lsm303dlh_init(void)
         i2c_register_board_info(0, &lsm303dlh_device, 1);
 }
 
+static struct i2c_board_info __initdata betelgeuse_cap_sensor_device = {
+	I2C_BOARD_INFO("foliocap_kbd", 0x43),
+	.irq = TEGRA_GPIO_TO_IRQ(FOLIOCAP_IRQ_GPIO),
+};
+
+static void betelgeuse_cap_sensor_init(void)
+{
+	i2c_register_board_info(4, &betelgeuse_cap_sensor_device, 1);
+}
+
 int __init betelgeuse_sensors_register_devices(void)
 {
+	betelgeuse_cap_sensor_init();
 	betelgeuse_akm8975_init();
 	betelgeuse_adt7461_init();
 	betelgeuse_lsm303dlh_init();

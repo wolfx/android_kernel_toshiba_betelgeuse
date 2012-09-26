@@ -204,6 +204,7 @@ static struct tegra_gpio_table gpio_table[] = {
 	{ .gpio = AKM8975_IRQ_GPIO,			.enable = true },
 	{ .gpio = LSM303DHL_IRQ_GPIO,			.enable = true },
 	{ .gpio = TEGRA_GPIO_CDC_IRQ,			.enable = true },
+	{ .gpio = FOLIOCAP_IRQ_GPIO,			.enable = true },
 };
 
 void __init betelgeuse_pinmux_init(void)
