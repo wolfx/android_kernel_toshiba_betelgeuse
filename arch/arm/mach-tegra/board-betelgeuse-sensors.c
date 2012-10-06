@@ -132,11 +132,21 @@ static void betelgeuse_cap_sensor_init(void)
 	i2c_register_board_info(4, &betelgeuse_cap_sensor_device, 1);
 }
 
+static struct i2c_board_info __initdata betelgeuse_eeprom_device = {
+	I2C_BOARD_INFO("folio_eeprom", 0x50),
+};
+
+static void betelgeuse_eeprom_init(void)
+{
+	i2c_register_board_info(4, &betelgeuse_eeprom_device, 1);
+}
+
 int __init betelgeuse_sensors_register_devices(void)
 {
 	betelgeuse_cap_sensor_init();
 	betelgeuse_akm8975_init();
 	betelgeuse_adt7461_init();
 	betelgeuse_lsm303dlh_init();
+	betelgeuse_eeprom_init();
 	return 0;
 }
