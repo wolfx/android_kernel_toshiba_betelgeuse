@@ -70,6 +70,8 @@ extern void nvec_poweroff(void);
 
 extern void nvec_restart(void);
 
+extern void nvec_reboot_recovery(void);
+
 /* Request/Response types */
 #define NVEC_CMD_SYSTEM					0x01
 #define NVEC_CMD_BATTERY				0x02
@@ -562,6 +564,7 @@ struct NVEC_REQ_GPIO_CONFIGUREWAKEVECTOR_PAYLOAD
 #define NVEC_CMD_SLEEP_APPOWERDOWN 							0x01
 #define NVEC_CMD_SLEEP_APSUSPEND 							0x02
 #define NVEC_CMD_SLEEP_APRESTART							0x03
+#define NVEC_CMD_SLEEP_APRECOVERY							0x08
  
 /**
  * Sleep payload data structures

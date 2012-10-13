@@ -1241,6 +1241,24 @@ void nvec_restart(void)
 }
 EXPORT_SYMBOL(nvec_restart);
 
+/* Restart by using NvEC */
+void nvec_reboot_recovery(void)
+{
+	if (g_nvec != NULL) {
+
+	/* Disable event reporting */
+	nvec_disable_eventreporting(g_nvec);
+
+	/* Send the command to restart AP */
+	nvec_cmd_xfer(g_nvec->dev,
+			NVEC_CMD_SLEEP, NVEC_CMD_SLEEP_APRECOVERY,
+			NULL,0,NULL,0);
+	} else {
+		pr_emerg("NvEC not initialized. Unable to restart\n");
+	}
+}
+EXPORT_SYMBOL(nvec_reboot_recovery);
+
 static int __remove_subdev(struct device *dev, void *unused)
 {
 	platform_device_unregister(to_platform_device(dev));
