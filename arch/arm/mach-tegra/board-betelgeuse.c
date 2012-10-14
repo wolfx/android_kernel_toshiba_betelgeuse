@@ -338,16 +338,3 @@ MACHINE_START(BETELGEUSE, "betelgeuse")
 	.reserve	= tegra_betelgeuse_reserve,
 	.fixup		= tegra_betelgeuse_fixup,
 MACHINE_END
-
-#if 0
-#define PMC_WAKE_STATUS 0x14
-
-static int betelgeuse_wakeup_key(void)
-{
-	unsigned long status = 
-		readl(IO_ADDRESS(TEGRA_PMC_BASE) + PMC_WAKE_STATUS);
-	return status & TEGRA_WAKE_GPIO_PV2 ? KEY_POWER : KEY_RESERVED;
-}
-#endif
-
-

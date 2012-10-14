@@ -21,7 +21,7 @@
 #include <linux/platform_device.h>
 #include <linux/input.h>
 #include <linux/gpio_keys.h>
-#include <mach/io.h>
+#include <linux/io.h>
 #include <mach/iomap.h>
 #include <mach/kbc.h>
 #include <mach/gpio.h>
@@ -30,6 +30,7 @@
 #include "board-betelgeuse.h"
 #include "devices.h"
 #include "gpio-names.h"
+#include "wakeups-t2.h"
 
 #define BETELGEUSE_ROW_COUNT	1
 #define BETELGEUSE_COL_COUNT	2
@@ -63,9 +64,19 @@ static struct gpio_keys_button betelgeuse_gpio_keys_buttons[] = {
 	},
 };
 
+#define PMC_WAKE_STATUS 0x14
+
+static int betelgeuse_wakeup_key(void) {
+	unsigned long status =
+		readl(IO_ADDRESS(TEGRA_PMC_BASE) + PMC_WAKE_STATUS);
+
+	return status & TEGRA_WAKE_GPIO_PA0 ? KEY_POWER : KEY_RESERVED;
+}
+
 static struct gpio_keys_platform_data betelgeuse_gpio_keys = {
 	.buttons        = betelgeuse_gpio_keys_buttons,
 	.nbuttons       = ARRAY_SIZE(betelgeuse_gpio_keys_buttons),
+	.wakeup_key	= betelgeuse_wakeup_key,
 };
 
 static struct platform_device betelgeuse_gpio_keys_device = {
