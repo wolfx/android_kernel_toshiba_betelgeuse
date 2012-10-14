@@ -13,7 +13,8 @@
 #include <linux/slab.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
-#include <asm/setup.h>
+#include <linux/delay.h>
+#include <asm/uaccess.h>
 
 #define DRIVER_NAME	"folio_eeprom"
 #define DRIVER_AUTHOR	"Artem Makhutov <artem@makhutov.org>"
@@ -21,10 +22,10 @@
 #define I2C_TRY_COUNT	3
 #define TAG             "folio_eeprom: "
 #define logd(x...)      do { printk(x); } while(0)
-#define EEPROM_SIZE	0xff
+#define EEPROM_SIZE	0x100
 
-struct proc_dir_entry *proc_file_entry;
-unsigned char regdump[EEPROM_SIZE + 1];
+static struct folio_eeprom_dev *dev;
+static struct proc_dir_entry *proc_file_entry;
 
 struct folio_eeprom_dev {
 	/* i2c client for convinience */
@@ -34,7 +35,7 @@ struct folio_eeprom_dev {
 /*
     Write into DMI EEPROM
  */
-static int readRegDMI(struct folio_eeprom_dev *dev, unsigned char reg, unsigned char *buffer) {
+static int readRegDMI(unsigned char reg, unsigned char *buffer) {
         int i; 
         int ret;
         struct i2c_msg msgs[2];
@@ -65,41 +66,112 @@ static int readRegDMI(struct folio_eeprom_dev *dev, unsigned char reg, unsigned 
         return 0;
 }
 
-static void dumpDMI(struct folio_eeprom_dev *dev, unsigned char *regdump) {
+/*
+    Write into DMI EEPROM
+*/
+static int writeRegDMI(unsigned char reg, unsigned char buffer, unsigned int len) {
 	int i;
+	int ret;
+	unsigned char writeBuffer[2];
+	struct i2c_msg msgs[1];
 
-	for (i=0;i<EEPROM_SIZE;i++) {
-		readRegDMI(dev, i, &regdump[i]);
+	if (writeBuffer == NULL) {
+		logd(TAG "writeReg kmalloc nomem");
+		return -ENOMEM;
 	}
-	return;
-};
 
-static int cmdline_proc_show(struct seq_file *m, void *v)
-{
-	int i;
+	writeBuffer[0] = reg;
+	writeBuffer[1] = buffer;
 
-	for (i=0;i<EEPROM_SIZE;i++) {
-		seq_printf(m, "%c", regdump[i]);
+	msgs[0].addr = dev->client->addr;
+	msgs[0].len = 2;
+	msgs[0].buf = writeBuffer;
+	msgs[0].flags = 0;
+
+	for (i = 0; i < I2C_TRY_COUNT; i++) {
+		msleep(50);
+		ret = i2c_transfer(dev->client->adapter, msgs, 1);
+		if (ret==1) {
+			return 0;
+		}
+	}
+
+	if(ret != 1)
+	{
+		logd(TAG "i2c_write failed(%d), %d\r\n", ret, reg);
+		return -EINVAL;
 	}
 
 	return 0;
 }
 
-static int cmdline_proc_open(struct inode *inode, struct file *file)
-{
+
+static void dumpDMI(unsigned char *buffer) {
+	int i;
+
+	for (i=0;i<EEPROM_SIZE;i++) {
+		readRegDMI(i, &buffer[i]);
+	}
+
+	buffer[EEPROM_SIZE] ='\0';
+
+	return;
+};
+
+static int cmdline_proc_show(struct seq_file *m, void *v) {
+	int i;
+	unsigned char buffer[EEPROM_SIZE + 1];
+
+	dumpDMI(buffer);
+
+	for (i=0;i<EEPROM_SIZE;i++) {
+		seq_printf(m, "%c", buffer[i]);
+	}
+
+	return 0;
+}
+
+static int cmdline_proc_open(struct inode *inode, struct file *file) {
 	return single_open(file, cmdline_proc_show, NULL);
+}
+
+static ssize_t proc_procreadwrite_write (struct file *file, const char * buf, size_t size, loff_t * ppos) {
+	int i;
+	size_t len = EEPROM_SIZE;
+	char buffer[EEPROM_SIZE + 1];
+
+	// EEPROM must be EEPROM_SIZE byte in size
+	if (size != EEPROM_SIZE) {
+		logd(TAG "EEPROM size %i bytes and not %i bytes\n", size, EEPROM_SIZE);
+		return -EFAULT;
+	}
+
+	if (len > size)
+		len = size;
+
+	if (copy_from_user (buffer, buf, len))
+		return -EFAULT;
+
+	buffer[len] = '\0';
+
+	logd(TAG "proc_procreadwrite_write: %i\n", size);
+
+	for (i=0;i<EEPROM_SIZE;i++) {
+		writeRegDMI(i, buffer[i], EEPROM_SIZE);
+	}
+
+	return len;
 }
 
 static const struct file_operations folio_eeprom_proc_dump_fops = {
 	.open		= cmdline_proc_open,
 	.read		= seq_read,
+	.write		= proc_procreadwrite_write,
 	.llseek		= seq_lseek,
 	.release	= single_release,
 };
 
 static int folio_eeprom_probe(struct i2c_client *client, const struct i2c_device_id *id) {
-	struct folio_eeprom_dev *dev;
-
 	logd(TAG "folio_eeprom_probe\r\n");
 
 	dev = kzalloc(sizeof(struct folio_eeprom_dev), GFP_KERNEL);
@@ -110,9 +182,6 @@ static int folio_eeprom_probe(struct i2c_client *client, const struct i2c_device
 	i2c_set_clientdata(client, dev);
 	// For convinience
 	dev->client = client;
-
-	dumpDMI(dev, regdump);
-	regdump[EEPROM_SIZE] ='\0';
 
 	proc_file_entry = proc_create("folio_eeprom_dump", 0, NULL, &folio_eeprom_proc_dump_fops);
 	if(proc_file_entry == NULL) {
@@ -127,11 +196,7 @@ failed_alloc_dev:
 	return -1;
 }
 
-static int folio_eeprom_remove(struct i2c_client *client)
-{
-	struct folio_eeprom_dev *dev;
-	dev = (struct folio_eeprom_dev *)i2c_get_clientdata(client);
-	
+static int folio_eeprom_remove(struct i2c_client *client) {
 	kfree(dev);
 	remove_proc_entry("folio_eeprom_dump", NULL);
 	return 0;
@@ -151,8 +216,7 @@ static struct i2c_driver folio_eeprom_driver = {
 	},
 };
 
-static int __init folio_eeprom_init(void)
-{
+static int __init folio_eeprom_init(void) {
 	int e;
 	logd(TAG "folio_eeprom_init\r\n");
 
@@ -164,8 +228,7 @@ static int __init folio_eeprom_init(void)
 	return e;
 }
 
-static void __exit folio_eeprom_exit(void) 
-{
+static void __exit folio_eeprom_exit(void) {
 	i2c_del_driver(&folio_eeprom_driver);
 }
 
