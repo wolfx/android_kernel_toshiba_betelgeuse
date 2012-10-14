@@ -574,7 +574,10 @@ static struct platform_device *betelgeuse_power_devices[] __initdata = {
 static void betelgeuse_power_off(void)
 {
 	/* Power down through NvEC */
-	nvec_poweroff();
+	while (true) {
+		nvec_poweroff();
+		msleep(100);
+	}
 }
 
 /* Init power management unit of Tegra2 */
