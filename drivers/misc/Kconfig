@@ -568,13 +568,6 @@ config MAX1749_VIBRATOR
 	---help---
 	Adds a timed output vibrator device node for MAX1749 vibrator motor
 
-config FOLIO100_EEPROM
-	tristate "Folio 100 EEPROM"
-	depends on MACH_BETELGEUSE
-	default y
-	---help---
-	Gives access to the EEPROM in Folio 100
-
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
