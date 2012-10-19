@@ -471,46 +471,46 @@ static void reg_on(const char *reg)
 	regulator_put(regulator);
 }
 
-#if 0
-static bool console_flushed;
-static void betelgeuse_flush_console(void)
-{
-	if (console_flushed)
-		return;
-	console_flushed = true;
+/* Write 0x31 at offset 0xFC in the EEPROM (0x50 at I2C bus 4)to make the bootload boot to recovery */
+static int write_bootmode_to_eeprom(void) {
+        int i;
+        int ret;
+        unsigned char writeBuffer[2];
+        struct i2c_msg msgs[1];
 
-	printk("\n");
-	pr_emerg("Restarting %s\n", linux_banner);
-	if (!try_acquire_console_sem()) {
-		release_console_sem();
-		return;
-	}
+        writeBuffer[0] = 0xFC;
+        writeBuffer[1] = 0x31;
 
-	msleep(50);
+        msgs[0].addr = 0x50;
+        msgs[0].len = 2;
+        msgs[0].buf = writeBuffer;
+        msgs[0].flags = 0;
 
-	local_irq_disable();
-	if (try_acquire_console_sem())
-		pr_emerg("tegra_restart: Console was locked! Busting\n");
-	else
-		pr_emerg("tegra_restart: Console was locked!\n");
-	release_console_sem();
+	/* Sometimes write may fail - try to repleat it up to 5 times */
+        for (i = 0; i < 5; i++) {
+                msleep(50);
+                ret = i2c_transfer(i2c_get_adapter(4), msgs, 1);
+                if (ret==1) {
+                        return 0;
+                }
+        }
+
+        if(ret != 1)
+        {
+                //logd(TAG "i2c_write failed(%d), %d\r\n", ret, reg);
+                return -EINVAL;
+        }
+
+        return 0;
 }
 
 static void betelgeuse_restart(char mode, const char *cmd)
 {
-	/* USB power rail must be enabled during boot or we won't reboot*/
-	reg_on("avdd_usb");
-
-	/* Prepare to restart using NvEC */
-	nvec_restart();
-
-	/* Flush the console */
-	betelgeuse_flush_console();
-
-	/* Restart the machine - This will eventually pulse the reset line */
+	if(cmd && strncmp(cmd,"recovery",8)==0){
+		write_bootmode_to_eeprom();
+	}
 	arm_machine_restart(mode, cmd);
 }
-#endif
 
 static int tegra_reboot_notify(struct notifier_block *nb,
 				unsigned long event, void *data)
@@ -541,7 +541,6 @@ static void __init tegra_setup_reboot(void)
 	if (rc)
 		pr_err("%s: failed to register platform reboot notifier\n",
 			__func__);
-	/*arm_pm_restart = betelgeuse_restart;		*/
 }
 
 /* missing from defines ... remove ASAP when defined in devices.c */
@@ -601,6 +600,8 @@ int __init betelgeuse_power_register_devices(void)
 	pm_power_off = betelgeuse_power_off;
 
 	/* And the restart callback */
+	arm_pm_restart = betelgeuse_restart;
+
 	tegra_setup_reboot();
 
 	/* signal that power regulators have fully specified constraints */
