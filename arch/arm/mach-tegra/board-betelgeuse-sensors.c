@@ -133,7 +133,7 @@ static void betelgeuse_cap_sensor_init(void)
 }
 
 static struct i2c_board_info __initdata betelgeuse_eeprom_device = {
-	I2C_BOARD_INFO("folio_eeprom", 0x50),
+	I2C_BOARD_INFO("24c02", 0x50),
 };
 
 static void betelgeuse_eeprom_init(void)
