@@ -24,6 +24,7 @@ static __initdata struct tegra_clk_init_table betelgeuse_clk_init_table[] = {
 	{ "spdif_out",		"pll_a_out0",		0,		false},
 	{ "sdmmc2",		"clk_m",		48000000,	true },
 	{ "pwm",		"clk_m",		12000000,	false},
+	{ "pll_u",		NULL,			480000000,	true },
 	{ NULL,			NULL,			0,		0},
 };
 
