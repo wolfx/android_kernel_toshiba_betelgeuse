@@ -481,6 +481,10 @@ static int tegra_reboot_notify(struct notifier_block *nb,
 {
 	switch (event) {
 	case SYS_RESTART:
+		/* USB power rail must be enabled during boot or we won't reboot*/
+		reg_on("avdd_usb");
+
+		return NOTIFY_OK;
 	case SYS_HALT:
 	case SYS_POWER_OFF:
 		/* USB power rail must be enabled during boot or we won't reboot*/
