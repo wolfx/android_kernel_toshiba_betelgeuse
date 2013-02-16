@@ -181,7 +181,7 @@ static int __devinit egalax_ts_probe(struct i2c_client *client,
 	ts->input_dev = input_dev;
 
 	/* controller may be in sleep, wake it up. */
-	egalax_wake_up_device(client);
+	//egalax_wake_up_device(client);
 
 	ret = egalax_firmware_version(client);
 	if (ret < 0) {
@@ -278,7 +278,7 @@ static struct i2c_driver egalax_ts_driver = {
 	.driver = {
 		.name	= "egalax_ts",
 		.owner	= THIS_MODULE,
-		.pm	= &egalax_ts_pm_ops,
+		//.pm	= &egalax_ts_pm_ops,
 	},
 	.id_table	= egalax_ts_id,
 	.probe		= egalax_ts_probe,
